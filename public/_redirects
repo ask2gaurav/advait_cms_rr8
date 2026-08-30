@@ -1,0 +1,3 @@
+# Static host fallback. Every public route is prerendered, so this only
+# catches genuinely unknown paths -> 404.
+/admin/*  /  404

@@ -5,3 +5,11 @@
 # React Router
 /.react-router/
 /build/
+
+# Generated content snapshots
+/content/*.json
+/content/.meta.json
+
+# User uploads
+/public/uploads/*
+!/public/uploads/.gitkeep

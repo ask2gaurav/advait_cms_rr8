@@ -1,0 +1,5 @@
+<!-- PLACEHOLDER — replace with the official Advait Solutions mark, then run `npm run icons`. -->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-label="Advait Solutions">
+  <rect width="512" height="512" rx="96" fill="#111827"/>
+  <path d="M256 108 372 404h-63l-22-58H181l-22 58H96L212 108h44Zm-54 182h108l-54-142-54 142Z" fill="#F97316"/>
+</svg>

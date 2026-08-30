@@ -1,15 +1,113 @@
 @import "tailwindcss";
 
+/* Dark mode is class-based (seeded from system by the no-flash script in root.tsx). */
+@custom-variant dark (&:where(.dark, .dark *));
+
 @theme {
-  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif,
-    "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji",
+    "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+
+  /* Brand — primary orange. Used sparingly: CTAs + accents only. */
+  --color-brand-50: #fff7ed;
+  --color-brand-100: #ffedd5;
+  --color-brand-200: #fed7aa;
+  --color-brand-300: #fdba74;
+  --color-brand-400: #fb923c;
+  --color-brand-500: #f97316;
+  --color-brand-600: #ea580c;
+  --color-brand-700: #c2410c;
+  --color-brand-800: #9a3412;
+  --color-brand-900: #7c2d12;
+  --color-brand-950: #431407;
+
+  /* Neutrals */
+  --color-ink: #111827;
+  --color-charcoal: #1f2937;
+  --color-mist: #f6f8fb;
 }
 
-html,
-body {
-  @apply bg-white dark:bg-gray-950;
+@layer base {
+  :root {
+    color-scheme: light;
+  }
 
-  @media (prefers-color-scheme: dark) {
+  :root.dark {
     color-scheme: dark;
   }
+
+  html {
+    -webkit-text-size-adjust: 100%;
+  }
+
+  html,
+  body {
+    overflow-x: hidden;
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    html {
+      scroll-behavior: smooth;
+    }
+  }
+
+  body {
+    @apply bg-white text-gray-900 antialiased dark:bg-gray-950 dark:text-gray-100;
+  }
+
+  ::selection {
+    @apply bg-brand-500/20;
+  }
+
+  :focus-visible {
+    @apply outline-none ring-2 ring-brand-500 ring-offset-2 ring-offset-white dark:ring-offset-gray-950;
+  }
+}
+
+/* Rich-text output from the CMS (BlockNote → sanitized HTML). */
+.prose-content {
+  @apply max-w-none leading-relaxed text-gray-700 dark:text-gray-300;
+}
+.prose-content > * + * {
+  @apply mt-4;
+}
+.prose-content h2 {
+  @apply mt-10 text-2xl font-semibold text-gray-900 dark:text-white;
+}
+.prose-content h3 {
+  @apply mt-8 text-xl font-semibold text-gray-900 dark:text-white;
+}
+.prose-content a {
+  @apply font-medium text-brand-600 underline decoration-brand-300 underline-offset-2 hover:text-brand-700 dark:text-brand-400;
+}
+.prose-content ul {
+  @apply ml-6 list-disc;
+}
+.prose-content ol {
+  @apply ml-6 list-decimal;
+}
+.prose-content li + li {
+  @apply mt-1;
+}
+.prose-content blockquote {
+  @apply border-l-4 border-brand-300 pl-4 italic text-gray-600 dark:text-gray-400;
+}
+.prose-content pre {
+  @apply overflow-x-auto rounded-lg bg-gray-900 p-4 text-sm text-gray-100;
+}
+.prose-content :not(pre) > code {
+  @apply rounded bg-gray-100 px-1.5 py-0.5 text-[0.9em] dark:bg-gray-800;
+}
+.prose-content img,
+.prose-content figure img {
+  @apply rounded-xl;
+}
+.prose-content figure figcaption {
+  @apply mt-2 text-center text-sm text-gray-500;
+}
+.prose-content table {
+  @apply w-full border-collapse text-left text-sm;
+}
+.prose-content th,
+.prose-content td {
+  @apply border border-gray-200 px-3 py-2 dark:border-gray-800;
 }

@@ -5,7 +5,7 @@ Read it completely before starting any task.
 
 ## Project Goal (one sentence)
 
-Build a local-first React Router 7 CMS that stores content in MongoDB, provides a rich admin UI, and generates a fully static SEO-friendly website that can be hosted on any static host at near-zero cost.
+Build a local-first React Router 8 CMS that stores content in MongoDB, provides a rich admin UI, and generates a fully static SEO-friendly website that can be hosted on any static host at near-zero cost.
 
 ## Non-Negotiable Rules
 
@@ -108,6 +108,18 @@ npm run build
 npm run typecheck
 ```
 
+## Public site — Advait Solutions base template
+
+The public site is the Advait Solutions marketing site and the base layout for every page.
+
+- **Brand:** primary orange `#F97316` (`brand-*` tokens in `app/app.css`), charcoal `#1F2937` / ink `#111827`, `mist` surface. **Use orange sparingly** — CTAs and small accents only. Inter font. Rounded `lg`/`xl`, soft shadows, subtle borders, generous whitespace.
+- **Imagery:** generated abstract SVG/CSS only (`app/components/visuals/*`). **No external images / Unsplash / hotlinks** — CSP, offline and local-first forbid it. Real photos, if ever added, go in `public/` and use `<img>` with `width`/`height` + `loading="lazy"`.
+- **Design system:** `app/components/layout/{Section,SectionHeading}`, `app/components/ui/{button,CTALink,Badge}`, `app/components/Icon` (named lucide icons), `app/components/site` (`Container`, `SiteHeader`, `SiteFooter`, `Prose`, `PageHero`, `JsonLd`). Home sections live in `app/components/home/*`.
+- **Default copy** is typed structured data in `app/lib/site-content.ts` (never JSX). The CMS overrides it later; sections are marked with `data-cms-section` (`hero`, `services`, `why`, `featured-work`, `ai-capabilities`, `final-cta`, `header`, `footer`, `page-*`). Featured Work + Insights already read live CMS data.
+- **Dark mode:** class-based (`.dark` on `<html>`), seeded from system by the no-flash script in `app/root.tsx`; `ThemeToggle` persists an explicit choice. Every new component must be correct in both themes.
+- **PWA:** `public/manifest.webmanifest`, `public/service-worker.js` (minimal SWR + offline fallback → `/offline`), icons in `public/icons/`. Regenerate icons after changing the logo: replace `public/brand/icon.svg` (or add `public/brand/source-logo.png`) then run `npm run icons`.
+- **SEO:** every route exports `meta` via `buildMeta()` in `app/lib/seo.ts`; JSON-LD helpers for Organization / Service / Article / BreadcrumbList.
+
 ## When in Doubt
 
 1. Re-read ARCHITECTURE.md.
@@ -116,4 +128,4 @@ npm run typecheck
 
 ---
 
-Last updated: 2026-08-29
+Last updated: 2026-08-30

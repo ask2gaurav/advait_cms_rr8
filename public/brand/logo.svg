@@ -1,0 +1,11 @@
+<!-- PLACEHOLDER — replace with the official Advait Solutions logo (transparent PNG/SVG). -->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 260 48" role="img" aria-label="Advait Solutions">
+  <path d="M24 6 44 44h-11l-3.6-7.4H14.6L11 44H0L20 6h4Zm-6 22h12l-6-12-6 12Z" fill="#F97316"/>
+  <text x="56" y="26" font-family="Inter, system-ui, sans-serif" font-size="20" font-weight="700" fill="#111827">Advait</text>
+  <text x="56" y="42" font-family="Inter, system-ui, sans-serif" font-size="11" font-weight="500" letter-spacing="2" fill="#6B7280">SOLUTIONS</text>
+  <style>
+    @media (prefers-color-scheme: dark) {
+      text { fill: #F9FAFB; }
+    }
+  </style>
+</svg>
