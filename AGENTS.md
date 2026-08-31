@@ -92,8 +92,10 @@ Build a local-first React Router 8 CMS that stores content in MongoDB, provides 
 # Install
 npm install
 
-# Local MongoDB (example with Docker)
-docker run -d -p 27017:27017 --name cms-mongo mongo:7
+# Local MongoDB (Docker Compose — container `cms-mongo`, volume `cms-mongo-data`)
+npm run db:up        # docker compose up -d
+npm run db:down      # stop
+npm run db:reset     # stop + wipe data
 
 # Export content for static build
 npm run export

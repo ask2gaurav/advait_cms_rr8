@@ -9,6 +9,11 @@
     "typecheck": "react-router typegen && tsc",
     "check:boundary": "tsx scripts/check-public-boundary.ts",
     "icons": "tsx scripts/generate-icons.ts",
+    "db:up": "docker compose up -d --wait",
+    "db:down": "docker compose down",
+    "db:logs": "docker compose logs -f mongo",
+    "db:shell": "docker compose exec mongo mongosh cms",
+    "db:reset": "docker compose down -v",
     "seed": "tsx --env-file=.env scripts/seed.ts",
     "export": "tsx --env-file=.env scripts/export-content.ts",
     "publish:static": "npm run check:boundary && npm run export && npm run build"

@@ -2,6 +2,9 @@
 .env
 /node_modules/
 
+# Claude Code / assistant session transcripts — local only
+/.cc-history/
+
 # React Router
 /.react-router/
 /build/

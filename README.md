@@ -15,14 +15,21 @@ See [ARCHITECTURE.md](./ARCHITECTURE.md) and [AGENTS.md](./AGENTS.md).
 
 ```bash
 npm install
-
-# Local MongoDB (Docker)
-docker run -d -p 27017:27017 --name cms-mongo --restart unless-stopped mongo:7
+npm run db:up                 # start local MongoDB (docker-compose.yml)
 
 cp .env.example .env          # then edit SESSION_SECRET + SEED_ADMIN_* + SITE_URL
 npm run seed                  # master user + Advait Solutions settings, nav, page stubs
 npm run icons                 # PWA / favicon PNGs from public/brand/icon.svg
 ```
+
+MongoDB runs in Docker via [docker-compose.yml](./docker-compose.yml) (container
+`cms-mongo`, data in the `cms-mongo-data` volume). It's local-only — the public
+site is static and has no database. `npm run db:down` stops it; `npm run db:reset`
+stops **and wipes** the data.
+
+> If you previously started MongoDB with a raw `docker run --name cms-mongo`,
+> remove it once so Compose can take over the name/port:
+> `docker rm -f cms-mongo`, then `npm run db:up && npm run seed && npm run export`.
 
 `SEED_RESET=1 npm run seed` re-seeds site settings, menus and the default page
 stubs from scratch (users / posts / case studies are never touched) — use it
@@ -52,6 +59,9 @@ changes.
 
 | Command | What it does |
 |---|---|
+| `npm run db:up` / `db:down` | Start / stop local MongoDB (Docker) |
+| `npm run db:shell` | `mongosh` into the `cms` database |
+| `npm run db:reset` | Stop MongoDB **and delete all data** |
 | `npm run dev` | Admin + public, with the dev server (Mongo required) |
 | `npm run seed` | Idempotent: master user + settings + menus |
 | `npm run export` | `content/*.json` snapshot of published content |
