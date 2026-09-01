@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 -11 539 153" role="img" aria-label="Advait Solutions" fill="none"><style>.ink{fill:#1F2937}@media(prefers-color-scheme:dark){.ink{fill:#F9FAFB}}</style>
+  <g transform="translate(-26.38 -10.38) scale(1.4131)"><path d="M28 105 L60 21 L92 105" fill="none" stroke="#F97316" stroke-width="13" stroke-linejoin="miter" stroke-linecap="butt" stroke-miterlimit="2"/><circle cx="60" cy="64" r="5" class="ink"/><circle cx="60" cy="8" r="6" fill="#F97316"/></g>
+  <text x="136.8" y="92" font-family="Inter, system-ui, -apple-system, 'Segoe UI', sans-serif" font-weight="800" font-size="100" letter-spacing="4" fill="#F97316">ADV</text>
+  <g transform="translate(368.01 12.0) scale(0.8)" fill="#F97316"><path d="M2 100 L30 2 L46 2 L74 100 L50 100 L38 34 L26 100 Z"/></g>
+  <g transform="translate(435.66 17.0) scale(0.75)" fill="#F97316"><rect x="2" y="29" width="22" height="71" rx="1"/><rect x="1" y="0" width="24" height="21" rx="4.5"/></g>
+  <text x="460.4" y="92" font-family="Inter, system-ui, -apple-system, 'Segoe UI', sans-serif" font-weight="800" font-size="100" letter-spacing="4" fill="#F97316">T</text>
+  <text x="136.8" y="138" font-family="Inter, system-ui, -apple-system, 'Segoe UI', sans-serif" font-weight="500" font-size="41" letter-spacing="1.6" class="ink">Solutions</text>
+</svg>

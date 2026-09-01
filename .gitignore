@@ -5,6 +5,9 @@
 # Claude Code / assistant session transcripts — local only
 #/.cc-history/
 
+# Local scratch — brand reference art, notes, etc.
+/.local/
+
 # React Router
 /.react-router/
 /build/

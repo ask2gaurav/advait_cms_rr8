@@ -1,7 +1,8 @@
 import { existsSync } from "node:fs";
-import { mkdir, readFile } from "node:fs/promises";
+import { mkdir, readFile, writeFile } from "node:fs/promises";
 import { join } from "node:path";
 import sharp from "sharp";
+import pngToIco from "png-to-ico";
 
 /**
  * Regenerate PWA / favicon PNGs from the brand mark.
@@ -13,6 +14,7 @@ import sharp from "sharp";
  * Run: `npm run icons`
  */
 const OUT = "public/icons";
+const FAVICON = "public/favicon.ico";
 const SOURCES = ["public/brand/source-logo.png", "public/brand/icon.svg"];
 
 async function loadSource(): Promise<Buffer> {
@@ -64,7 +66,13 @@ async function main() {
   // Small favicon PNG.
   await square(32).toFile(join(OUT, "favicon-32.png"));
 
-  console.log(`✓ wrote icons to ${OUT}/`);
+  // Multi-resolution favicon.ico (16 / 32 / 48) from the same mark, on white.
+  const icoSizes = await Promise.all(
+    [16, 32, 48].map((s) => square(s, "#ffffff").toBuffer()),
+  );
+  await writeFile(FAVICON, await pngToIco(icoSizes));
+
+  console.log(`✓ wrote icons to ${OUT}/ and ${FAVICON}`);
 }
 
 main().catch((err) => {

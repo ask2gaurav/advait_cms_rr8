@@ -1,11 +1,8 @@
-<!-- PLACEHOLDER — replace with the official Advait Solutions logo (transparent PNG/SVG). -->
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 260 48" role="img" aria-label="Advait Solutions">
-  <path d="M24 6 44 44h-11l-3.6-7.4H14.6L11 44H0L20 6h4Zm-6 22h12l-6-12-6 12Z" fill="#F97316"/>
-  <text x="56" y="26" font-family="Inter, system-ui, sans-serif" font-size="20" font-weight="700" fill="#111827">Advait</text>
-  <text x="56" y="42" font-family="Inter, system-ui, sans-serif" font-size="11" font-weight="500" letter-spacing="2" fill="#6B7280">SOLUTIONS</text>
-  <style>
-    @media (prefers-color-scheme: dark) {
-      text { fill: #F9FAFB; }
-    }
-  </style>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 -6 977 112" role="img" aria-label="Advait Solutions" fill="none"><style>.ink{fill:#1F2937}@media(prefers-color-scheme:dark){.ink{fill:#F9FAFB}}</style>
+  <g transform="translate(-15.78 3.40) scale(0.92)"><path d="M28 105 L60 21 L92 105" fill="none" stroke="#F97316" stroke-width="13" stroke-linejoin="miter" stroke-linecap="butt" stroke-miterlimit="2"/><circle cx="60" cy="64" r="5" class="ink"/><circle cx="60" cy="8" r="6" fill="#F97316"/></g>
+  <text x="108.8" y="100" font-family="Inter, system-ui, -apple-system, 'Segoe UI', sans-serif" font-weight="800" font-size="100" letter-spacing="4" fill="#F97316">ADV</text>
+  <g transform="translate(340.04 20.0) scale(0.8)" fill="#F97316"><path d="M2 100 L30 2 L46 2 L74 100 L50 100 L38 34 L26 100 Z"/></g>
+  <g transform="translate(407.69 25.0) scale(0.75)" fill="#F97316"><rect x="2" y="29" width="22" height="71" rx="1"/><rect x="1" y="0" width="24" height="21" rx="4.5"/></g>
+  <text x="432.4" y="100" font-family="Inter, system-ui, -apple-system, 'Segoe UI', sans-serif" font-weight="800" font-size="100" letter-spacing="4" fill="#F97316">T</text>
+  <text x="522.1" y="100" font-family="Inter, system-ui, -apple-system, 'Segoe UI', sans-serif" font-weight="500" font-size="100" letter-spacing="0.5" class="ink">Solutions</text>
 </svg>

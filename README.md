@@ -69,7 +69,8 @@ changes.
 | `npm run publish:static` | boundary check + export + build |
 | `npm run typecheck` | `react-router typegen && tsc` |
 | `npm run check:boundary` | Fails if a public route imports server-only code |
-| `npm run icons` | Regenerate PWA / favicon PNGs from the brand mark |
+| `npm run brand` | Regenerate `public/brand/*.svg` + `brand-lockup.tsx` from geometry |
+| `npm run icons` | Regenerate PWA icons + `favicon.ico` from `public/brand/icon.svg` |
 
 ## Design system & brand
 
@@ -93,9 +94,16 @@ layout for every page.
 production only) + `public/icons/*` + iOS meta in `app/root.tsx`. The SW does
 stale-while-revalidate for assets and falls back to `/offline` for navigations.
 
-**Update the logo:** replace `public/brand/icon.svg` (or drop
-`public/brand/source-logo.png`) and `public/brand/logo.svg`, then run
-`npm run icons`.
+**Brand assets** live in `public/brand/` and are generated from one geometry
+source: `npm run brand` writes `logo.svg`, `logo-stacked.svg`, `logo-mark.svg`,
+`logo-mono.svg`, `icon.svg` **and** the inline header/footer lockup
+`app/components/brand-lockup.tsx` (used so the wordmark renders in Inter and
+"Solutions" follows the dark theme). Then `npm run icons` re-rasters
+`public/icons/*.png` + `public/favicon.ico` from `icon.svg`.
+
+To use a different logo instead, drop `public/brand/source-logo.png` (or edit
+`icon.svg`) and re-run `npm run icons`; a CMS-uploaded logo overrides the built-in
+lockup at runtime.
 
 ## Rules
 

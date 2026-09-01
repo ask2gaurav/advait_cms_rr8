@@ -8,6 +8,7 @@ import { CTALink } from "~/components/ui/CTALink";
 import { ThemeToggle } from "~/components/theme-toggle";
 import { MobileNav, type NavItem } from "~/components/MobileNav";
 import { GridMotif } from "~/components/visuals/GridMotif";
+import { BrandLockup, BrandLockupStacked } from "~/components/brand-lockup";
 
 export function Container({
   children,
@@ -39,17 +40,35 @@ function navItems(menu?: MenuPublic): NavItem[] {
   return siteContent.nav.map((i) => ({ label: i.label, href: i.href }));
 }
 
-function Logo({ settings }: { settings: SettingsPublic }) {
-  const src = settings.logo?.path ?? "/brand/logo.svg";
+function Logo({
+  settings,
+  variant = "horizontal",
+}: {
+  settings: SettingsPublic;
+  variant?: "horizontal" | "stacked";
+}) {
+  // A CMS-uploaded logo wins; otherwise use the built-in inline lockup so the
+  // wordmark renders in Inter and "Solutions" follows the dark theme.
+  const custom = settings.logo?.path;
   return (
-    <Link to="/" className="flex items-center gap-2" aria-label={settings.siteName}>
-      <img
-        src={src}
-        alt={settings.siteName}
-        width={settings.logo?.width ?? 160}
-        height={settings.logo?.height ?? 32}
-        className="h-8 w-auto"
-      />
+    <Link
+      to="/"
+      className="flex items-center text-charcoal dark:text-white"
+      aria-label={settings.siteName}
+    >
+      {custom ? (
+        <img
+          src={custom}
+          alt={settings.siteName}
+          width={settings.logo?.width ?? 160}
+          height={settings.logo?.height ?? 32}
+          className="h-8 w-auto"
+        />
+      ) : variant === "stacked" ? (
+        <BrandLockupStacked className="h-14 w-auto" />
+      ) : (
+        <BrandLockup className="h-8 w-auto" />
+      )}
     </Link>
   );
 }
@@ -166,7 +185,7 @@ export function SiteFooter({
     >
       <Container className="grid gap-10 py-14 sm:grid-cols-2 lg:grid-cols-4">
         <div className="space-y-3 lg:col-span-2">
-          <Logo settings={settings} />
+          <Logo settings={settings} variant="stacked" />
           <p className="max-w-sm text-sm text-gray-600 dark:text-gray-400">
             {description}
           </p>
