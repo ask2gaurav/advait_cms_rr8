@@ -164,6 +164,21 @@ Flexible pages (Home, About, Approach, Contact, or any custom page).
   services: string[];             // or ObjectId[] later
   year?: number;
   url?: string;                   // live project link
+  // Structured long-form content (rendered by /works/:slug when present;
+  // falls back to `body` when `sections` is empty). Authored as JSON in admin.
+  readouts?: Array<{ label: string; value: string }>;   // hero stat chips
+  sections?: Array<{
+    type:
+      | "challenge"
+      | "journey"
+      | "solution"
+      | "evolution"
+      | "results"
+      | "conclusion"
+      | "prose";
+    data: Record<string, unknown>;  // prose fields are plain strings,
+                                    // media fields are Media ObjectId strings
+  }>;
   // Meta
   featured?: boolean;
   order?: number;

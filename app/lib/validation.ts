@@ -80,6 +80,131 @@ export const caseStudySchema = z.object({
   ...seo,
 });
 
+/* ---------------------------------------------------------------------------
+ * Case-study structured content: hero readouts + ordered section blocks.
+ * Authored as JSON in the admin (like Menu items). Prose fields are plain
+ * multi-paragraph strings, rendered to sanitized HTML at export time.
+ * ------------------------------------------------------------------------- */
+
+const prose = z.string().trim();
+const mediaId = z.string().trim().optional().or(z.literal(""));
+const sectionBase = {
+  kicker: z.string().trim().optional().or(z.literal("")),
+  title: z.string().trim().optional().or(z.literal("")),
+};
+
+export const caseStudyReadoutsSchema = z
+  .array(
+    z.object({
+      label: z.string().trim().min(1, "Readout label is required"),
+      value: z.string().trim().min(1, "Readout value is required"),
+    }),
+  )
+  .default([]);
+
+export const caseStudySectionSchema = z.discriminatedUnion("type", [
+  z.object({
+    type: z.literal("challenge"),
+    data: z.object({
+      ...sectionBase,
+      intro: prose.optional(),
+      items: z
+        .array(
+          z.object({
+            title: z.string().trim().min(1, "Item title is required"),
+            body: prose.optional(),
+          }),
+        )
+        .default([]),
+    }),
+  }),
+  z.object({
+    type: z.literal("journey"),
+    data: z.object({
+      ...sectionBase,
+      lede: prose.optional(),
+      nodes: z
+        .array(
+          z.object({
+            status: z.enum(["dead-end", "breakthrough", "milestone"]),
+            title: z.string().trim().min(1, "Node title is required"),
+            body: prose.optional(),
+          }),
+        )
+        .default([]),
+      diagram: mediaId,
+    }),
+  }),
+  z.object({
+    type: z.literal("solution"),
+    data: z.object({
+      ...sectionBase,
+      lede: prose.optional(),
+      cards: z
+        .array(
+          z.object({
+            title: z.string().trim().min(1, "Card title is required"),
+            body: prose.optional(),
+            tags: z.array(z.string().trim()).default([]),
+          }),
+        )
+        .default([]),
+    }),
+  }),
+  z.object({
+    type: z.literal("evolution"),
+    data: z.object({
+      ...sectionBase,
+      lede: prose.optional(),
+      rows: z
+        .array(
+          z.object({
+            before: mediaId,
+            after: mediaId,
+            beforeLabel: z.string().trim().optional().or(z.literal("")),
+            afterLabel: z.string().trim().optional().or(z.literal("")),
+            caption: prose.optional(),
+          }),
+        )
+        .default([]),
+    }),
+  }),
+  z.object({
+    type: z.literal("results"),
+    data: z.object({
+      ...sectionBase,
+      lede: prose.optional(),
+      tiles: z
+        .array(
+          z.object({
+            value: z.string().trim().min(1, "Tile value is required"),
+            label: z.string().trim().min(1, "Tile label is required"),
+            detail: z.string().trim().optional().or(z.literal("")),
+          }),
+        )
+        .default([]),
+    }),
+  }),
+  z.object({
+    type: z.literal("conclusion"),
+    data: z.object({
+      ...sectionBase,
+      lede: prose.optional(),
+      body: prose.optional(),
+      signoff: z.string().trim().optional().or(z.literal("")),
+    }),
+  }),
+  z.object({
+    type: z.literal("prose"),
+    data: z.object({
+      title: z.string().trim().optional().or(z.literal("")),
+      body: prose.optional(),
+    }),
+  }),
+]);
+
+export const caseStudySectionsSchema = z.array(caseStudySectionSchema).default([]);
+
 export const userSchema = z.object({
   email: z.string().trim().toLowerCase().email(),
   name: z.string().trim().min(1),

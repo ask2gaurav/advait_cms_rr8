@@ -148,7 +148,7 @@ generates a fully static, SEO-friendly website that is uploaded to any static ho
 - **User** — Admin accounts. `role: master | admin`; the master account is seeded and cannot be the last one removed.
 - **Page** — Home, About, Approach, Contact, custom pages (template-driven).
 - **Post** — Blog / Insights articles.
-- **CaseStudy** — Works / Case Studies.
+- **CaseStudy** — Works / Case Studies. Supports structured long-form `sections` (challenge / journey / solution / evolution / results / conclusion / prose) plus hero `readouts`; falls back to the rich-text `body` when no sections are set.
 - **Menu** + **MenuItem** — Hierarchical navigation.
 - **Media** — Uploaded assets metadata.
 - **Setting** — Site-wide config (title, logo, social links, SEO defaults, etc.).

@@ -57,6 +57,89 @@ export interface PostPublic extends SeoFields {
   updatedAt: string;
 }
 
+/** Hero stat chip. Plain text — rendered as React nodes, never HTML. */
+export interface CaseStudyReadout {
+  label: string;
+  value: string;
+}
+
+/**
+ * Structured case-study section blocks. The `*Html` fields are sanitized HTML
+ * produced from plain author prose at export time; media ids are resolved to
+ * `MediaPublic` (dropped when unresolved).
+ */
+export type CaseStudySectionPublic =
+  | {
+      type: "challenge";
+      data: {
+        kicker?: string;
+        title?: string;
+        introHtml?: string;
+        items: { title: string; bodyHtml?: string }[];
+      };
+    }
+  | {
+      type: "journey";
+      data: {
+        kicker?: string;
+        title?: string;
+        ledeHtml?: string;
+        nodes: {
+          status: "dead-end" | "breakthrough" | "milestone";
+          title: string;
+          bodyHtml?: string;
+        }[];
+        diagram?: MediaPublic;
+      };
+    }
+  | {
+      type: "solution";
+      data: {
+        kicker?: string;
+        title?: string;
+        ledeHtml?: string;
+        cards: { title: string; bodyHtml?: string; tags: string[] }[];
+      };
+    }
+  | {
+      type: "evolution";
+      data: {
+        kicker?: string;
+        title?: string;
+        ledeHtml?: string;
+        rows: {
+          before?: MediaPublic;
+          after?: MediaPublic;
+          beforeLabel?: string;
+          afterLabel?: string;
+          captionHtml?: string;
+        }[];
+      };
+    }
+  | {
+      type: "results";
+      data: {
+        kicker?: string;
+        title?: string;
+        ledeHtml?: string;
+        tiles: { value: string; label: string; detail?: string }[];
+      };
+    }
+  | {
+      type: "conclusion";
+      data: {
+        kicker?: string;
+        title?: string;
+        ledeHtml?: string;
+        bodyHtml?: string;
+        signoff?: string;
+      };
+    }
+  | {
+      type: "prose";
+      data: { title?: string; bodyHtml?: string };
+    };
+
 export interface CaseStudyPublic extends SeoFields {
   title: string;
   slug: string;
@@ -72,6 +155,8 @@ export interface CaseStudyPublic extends SeoFields {
   url?: string;
   featured?: boolean;
   order?: number;
+  readouts: CaseStudyReadout[];
+  sections: CaseStudySectionPublic[];
   publishedAt?: string;
   updatedAt: string;
 }

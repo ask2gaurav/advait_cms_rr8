@@ -3,9 +3,11 @@ import type { Route } from "./+types/works.$slug";
 import { getCaseStudy } from "~/lib/content";
 import { articleJsonLd, breadcrumbJsonLd, buildMeta } from "~/lib/seo";
 import { siteContent } from "~/lib/site-content";
-import { Container, JsonLd, PageHero, Prose } from "~/components/site";
+import { Container, JsonLd, Prose } from "~/components/site";
 import { Section } from "~/components/layout/Section";
 import { FinalCta } from "~/components/home/FinalCta";
+import { CaseStudyHero } from "~/components/case-study/CaseStudyHero";
+import { CaseStudySections } from "~/components/case-study/CaseStudySections";
 
 export function meta({ loaderData }: Route.MetaArgs) {
   if (!loaderData?.item) return buildMeta({ title: "Not found", noindex: true });
@@ -34,6 +36,7 @@ const META_ROWS: { key: "client" | "industry" | "year" | "services"; label: stri
 
 export default function CaseStudyDetail({ loaderData }: Route.ComponentProps) {
   const c = loaderData.item;
+  const sections = c.sections ?? [];
   return (
     <article>
       <JsonLd
@@ -52,44 +55,52 @@ export default function CaseStudyDetail({ loaderData }: Route.ComponentProps) {
           { name: c.title, path: `/works/${c.slug}` },
         ])}
       />
-      <PageHero eyebrow="Case study" title={c.title} lead={c.excerpt} />
 
-      <Section>
+      <CaseStudyHero
+        title={c.title}
+        lead={c.excerpt}
+        readouts={c.readouts ?? []}
+        cover={c.coverImage}
+      />
+
+      {(c.client || c.industry || c.year || c.services.length > 0) && (
+        <Section spacing="compact">
+          <Container>
+            <dl className="grid grid-cols-2 gap-6 text-sm sm:grid-cols-4">
+              {META_ROWS.map(({ key, label }) => {
+                const value =
+                  key === "services" ? c.services.join(", ") : (c[key] ?? "");
+                if (!value) return null;
+                return (
+                  <div key={key}>
+                    <dt className="text-gray-500">{label}</dt>
+                    <dd className="mt-1 font-medium text-gray-900 dark:text-white">
+                      {value}
+                    </dd>
+                  </div>
+                );
+              })}
+            </dl>
+          </Container>
+        </Section>
+      )}
+
+      {sections.length > 0 ? (
+        <CaseStudySections sections={sections} />
+      ) : c.bodyHtml ? (
+        <Section>
+          <Container>
+            <div className="mx-auto max-w-3xl">
+              <Prose html={c.bodyHtml} />
+            </div>
+          </Container>
+        </Section>
+      ) : null}
+
+      <Section spacing="compact">
         <Container>
-          <dl className="mb-12 grid grid-cols-2 gap-6 border-b border-gray-200 pb-10 text-sm sm:grid-cols-4 dark:border-gray-800">
-            {META_ROWS.map(({ key, label }) => {
-              const value =
-                key === "services" ? c.services.join(", ") : (c[key] ?? "");
-              if (!value) return null;
-              return (
-                <div key={key}>
-                  <dt className="text-gray-500">{label}</dt>
-                  <dd className="mt-1 font-medium text-gray-900 dark:text-white">
-                    {value}
-                  </dd>
-                </div>
-              );
-            })}
-          </dl>
-
-          {c.coverImage && (
-            <img
-              src={c.coverImage.path}
-              alt={c.coverImage.alt ?? c.title}
-              width={c.coverImage.width ?? 1200}
-              height={c.coverImage.height ?? 675}
-              loading="lazy"
-              decoding="async"
-              className="mb-12 w-full rounded-xl object-cover"
-            />
-          )}
-
-          <div className="mx-auto max-w-3xl">
-            <Prose html={c.bodyHtml} />
-          </div>
-
           {c.gallery.length > 0 && (
-            <div className="mt-14 grid gap-6 sm:grid-cols-2">
+            <div className="grid gap-6 sm:grid-cols-2">
               {c.gallery.map((g) => (
                 <img
                   key={g.path}
@@ -106,7 +117,7 @@ export default function CaseStudyDetail({ loaderData }: Route.ComponentProps) {
           )}
 
           {c.url && (
-            <p className="mt-12">
+            <p className={c.gallery.length > 0 ? "mt-12" : undefined}>
               <a
                 href={c.url}
                 target="_blank"
@@ -118,7 +129,7 @@ export default function CaseStudyDetail({ loaderData }: Route.ComponentProps) {
             </p>
           )}
 
-          <p className="mt-12">
+          <p className={c.gallery.length > 0 || c.url ? "mt-12" : undefined}>
             <Link
               to="/works"
               className="text-sm text-gray-500 hover:text-gray-900 dark:hover:text-white"

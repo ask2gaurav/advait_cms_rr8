@@ -1,8 +1,35 @@
+import type { z } from "zod";
 import { connectDb } from "~/lib/db.server";
 import { CaseStudy } from "~/lib/models/case-study.server";
-import { caseStudySchema, parseForm } from "~/lib/validation";
-import { resolvePublishedAt } from "~/lib/admin.server";
+import {
+  caseStudyReadoutsSchema,
+  caseStudySchema,
+  caseStudySectionsSchema,
+  parseForm,
+} from "~/lib/validation";
+import { FieldError, resolvePublishedAt } from "~/lib/admin.server";
 import { toSlug } from "~/lib/slug";
+
+/** Parse + validate a JSON-encoded form field (sections / readouts). */
+function parseJsonField<T>(
+  form: FormData,
+  name: string,
+  schema: z.ZodType<T>,
+): T {
+  let parsed: unknown;
+  try {
+    parsed = JSON.parse(String(form.get(name) ?? "[]"));
+  } catch {
+    throw new FieldError(name, "Must be valid JSON.");
+  }
+  const result = schema.safeParse(parsed);
+  if (!result.success) {
+    const issue = result.error.issues[0];
+    const path = issue?.path.length ? `${issue.path.join(".")}: ` : "";
+    throw new FieldError(name, `${path}${issue?.message ?? "Invalid data."}`);
+  }
+  return result.data;
+}
 
 export interface CaseStudyValues {
   title?: string;
@@ -20,6 +47,8 @@ export interface CaseStudyValues {
   url?: string;
   featured?: boolean;
   order?: number;
+  readoutsJson?: string;
+  sectionsJson?: string;
   seoTitle?: string;
   seoDescription?: string;
 }
@@ -59,6 +88,8 @@ export async function getCaseStudyValues(
     url: d.url,
     featured: d.featured,
     order: d.order,
+    readoutsJson: JSON.stringify(d.readouts ?? [], null, 2),
+    sectionsJson: JSON.stringify(d.sections ?? [], null, 2),
     seoTitle: d.seoTitle,
     seoDescription: d.seoDescription,
   };
@@ -67,12 +98,16 @@ export async function getCaseStudyValues(
 export async function saveCaseStudy(form: FormData, id?: string) {
   await connectDb();
   const input = parseForm(caseStudySchema, form);
+  const readouts = parseJsonField(form, "readoutsJson", caseStudyReadoutsSchema);
+  const sections = parseJsonField(form, "sectionsJson", caseStudySectionsSchema);
   const slug = input.slug || toSlug(input.title);
   const existing = id ? await CaseStudy.findById(id) : null;
   const doc = existing ?? new CaseStudy();
   doc.set({
     ...input,
     slug,
+    readouts,
+    sections,
     coverImage: input.coverImage || undefined,
     ogImage: input.ogImage || undefined,
     client: input.client || undefined,

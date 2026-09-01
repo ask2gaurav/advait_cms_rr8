@@ -10,6 +10,7 @@ import { Setting } from "~/lib/models/setting.server";
 import { blocksToHtml } from "~/lib/richtext";
 import type {
   CaseStudyPublic,
+  CaseStudySectionPublic,
   ContentMeta,
   MediaPublic,
   MenuItemPublic,
@@ -23,6 +24,169 @@ const CONTENT_DIR = "content";
 
 function sanitize(html: string): string {
   return DOMPurify.sanitize(html, { USE_PROFILES: { html: true } });
+}
+
+/**
+ * Plain author prose (blank line = new paragraph) → sanitized HTML.
+ * Pre-formed block-level tags are passed through untouched. Kept here (in the
+ * server-only export module) so no non-`.server` file depends on it.
+ */
+function proseToHtml(input: unknown): string {
+  const text = typeof input === "string" ? input.trim() : "";
+  if (!text) return "";
+  const html = text
+    .split(/\n\s*\n/)
+    .map((para) => {
+      const chunk = para.trim();
+      if (!chunk) return "";
+      if (/^<(p|ul|ol|h[1-6]|blockquote|figure|table|div)[\s>]/i.test(chunk)) {
+        return chunk;
+      }
+      return `<p>${chunk.replace(/\n/g, "<br>")}</p>`;
+    })
+    .join("");
+  return sanitize(html);
+}
+
+type RawSection = { type?: string; data?: Record<string, unknown> };
+
+/** Walk section blocks and register every referenced media id. */
+function collectSectionMediaIds(
+  sections: unknown,
+  add: (v: unknown) => void,
+): void {
+  if (!Array.isArray(sections)) return;
+  for (const raw of sections as RawSection[]) {
+    const data = raw?.data ?? {};
+    if (raw?.type === "journey") add(data.diagram);
+    if (raw?.type === "evolution" && Array.isArray(data.rows)) {
+      for (const row of data.rows as Record<string, unknown>[]) {
+        add(row.before);
+        add(row.after);
+      }
+    }
+  }
+}
+
+/** Denormalize raw section blocks into the export-ready public shape. */
+function buildCaseStudySections(
+  sections: unknown,
+  media: Map<string, MediaPublic>,
+): CaseStudySectionPublic[] {
+  if (!Array.isArray(sections)) return [];
+  const pic = (v: unknown) =>
+    v ? media.get(String(v)) ?? undefined : undefined;
+  const str = (v: unknown) => (typeof v === "string" ? v : undefined);
+  const arr = (v: unknown): Record<string, unknown>[] =>
+    Array.isArray(v) ? (v as Record<string, unknown>[]) : [];
+
+  const out: CaseStudySectionPublic[] = [];
+  for (const raw of sections as RawSection[]) {
+    const d = raw?.data ?? {};
+    const kicker = str(d.kicker) || undefined;
+    const title = str(d.title) || undefined;
+    switch (raw?.type) {
+      case "challenge":
+        out.push({
+          type: "challenge",
+          data: {
+            kicker,
+            title,
+            introHtml: proseToHtml(d.intro),
+            items: arr(d.items).map((i) => ({
+              title: String(i.title ?? ""),
+              bodyHtml: proseToHtml(i.body),
+            })),
+          },
+        });
+        break;
+      case "journey":
+        out.push({
+          type: "journey",
+          data: {
+            kicker,
+            title,
+            ledeHtml: proseToHtml(d.lede),
+            nodes: arr(d.nodes).map((n) => ({
+              status: (n.status as "dead-end" | "breakthrough" | "milestone") ??
+                "milestone",
+              title: String(n.title ?? ""),
+              bodyHtml: proseToHtml(n.body),
+            })),
+            diagram: pic(d.diagram),
+          },
+        });
+        break;
+      case "solution":
+        out.push({
+          type: "solution",
+          data: {
+            kicker,
+            title,
+            ledeHtml: proseToHtml(d.lede),
+            cards: arr(d.cards).map((c) => ({
+              title: String(c.title ?? ""),
+              bodyHtml: proseToHtml(c.body),
+              tags: Array.isArray(c.tags) ? (c.tags as string[]) : [],
+            })),
+          },
+        });
+        break;
+      case "evolution":
+        out.push({
+          type: "evolution",
+          data: {
+            kicker,
+            title,
+            ledeHtml: proseToHtml(d.lede),
+            rows: arr(d.rows).map((r) => ({
+              before: pic(r.before),
+              after: pic(r.after),
+              beforeLabel: str(r.beforeLabel),
+              afterLabel: str(r.afterLabel),
+              captionHtml: proseToHtml(r.caption),
+            })),
+          },
+        });
+        break;
+      case "results":
+        out.push({
+          type: "results",
+          data: {
+            kicker,
+            title,
+            ledeHtml: proseToHtml(d.lede),
+            tiles: arr(d.tiles).map((t) => ({
+              value: String(t.value ?? ""),
+              label: String(t.label ?? ""),
+              detail: str(t.detail),
+            })),
+          },
+        });
+        break;
+      case "conclusion":
+        out.push({
+          type: "conclusion",
+          data: {
+            kicker,
+            title,
+            ledeHtml: proseToHtml(d.lede),
+            bodyHtml: proseToHtml(d.body),
+            signoff: str(d.signoff),
+          },
+        });
+        break;
+      case "prose":
+        out.push({
+          type: "prose",
+          data: { title, bodyHtml: proseToHtml(d.body) },
+        });
+        break;
+      default:
+        break;
+    }
+  }
+  return out;
 }
 
 function iso(d: unknown): string | undefined {
@@ -74,6 +238,7 @@ export async function exportContent() {
     add(c.coverImage);
     add(c.ogImage);
     (c.gallery ?? []).forEach(add);
+    collectSectionMediaIds(c.sections, add);
   });
   if (setting) {
     add(setting.logo);
@@ -141,6 +306,11 @@ export async function exportContent() {
       url: c.url,
       featured: c.featured,
       order: c.order,
+      readouts: (c.readouts ?? []).map((r) => ({
+        label: String(r.label ?? ""),
+        value: String(r.value ?? ""),
+      })),
+      sections: buildCaseStudySections(c.sections, media),
       seoTitle: c.seoTitle,
       seoDescription: c.seoDescription,
       ogImage: c.ogImage ? media.get(String(c.ogImage))?.path : undefined,

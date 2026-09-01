@@ -11,6 +11,7 @@ import {
 } from "~/admin/form";
 import { RichTextEditor } from "~/admin/RichTextEditor";
 import { MediaField } from "~/admin/MediaField";
+import { Textarea } from "~/components/ui/textarea";
 
 const STATUS = [
   { value: "draft", label: "Draft" },
@@ -36,8 +37,34 @@ export function CaseStudyForm({
       <TextField name="slug" label="Slug" defaultValue={values.slug} error={fe.slug} hint="Leave blank on create to auto-generate." />
       <SelectField name="status" label="Status" options={STATUS} defaultValue={values.status ?? "draft"} error={fe.status} />
       <TextareaField name="excerpt" label="Excerpt" defaultValue={values.excerpt} error={fe.excerpt} />
-      <Field label="Body" error={fe.body}>
+      <Field
+        label="Body"
+        error={fe.body}
+        hint="Optional long-form fallback — shown only when Sections is empty."
+      >
         <RichTextEditor name="body" initialContent={values.body} />
+      </Field>
+      <Field
+        label="Sections (JSON)"
+        error={fe.sectionsJson}
+        hint='Ordered array of { type, data }. type: challenge | journey | solution | evolution | results | conclusion | prose. Prose fields are plain paragraphs (blank line = new paragraph); inline HTML allowed, no Markdown.'
+      >
+        <Textarea
+          name="sectionsJson"
+          defaultValue={values.sectionsJson}
+          className="min-h-96 font-mono text-xs"
+        />
+      </Field>
+      <Field
+        label="Hero readouts (JSON)"
+        error={fe.readoutsJson}
+        hint='Array of { label, value } — the stat chips shown in the hero.'
+      >
+        <Textarea
+          name="readoutsJson"
+          defaultValue={values.readoutsJson}
+          className="min-h-40 font-mono text-xs"
+        />
       </Field>
       <div className="grid grid-cols-2 gap-4">
         <TextField name="client" label="Client" defaultValue={values.client} />

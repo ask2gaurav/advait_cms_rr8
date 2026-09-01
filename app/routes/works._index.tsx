@@ -53,9 +53,21 @@ export default function WorksIndex({ loaderData }: Route.ComponentProps) {
                       {[c.client, c.year].filter(Boolean).join(" · ")}
                     </p>
                     {c.excerpt && (
-                      <p className="mt-2 flex-1 text-sm text-gray-600 dark:text-gray-400">
+                      <p className="mt-2 line-clamp-3 flex-1 text-sm text-gray-600 dark:text-gray-400">
                         {c.excerpt}
                       </p>
+                    )}
+                    {c.readouts.length > 0 && (
+                      <dl className="mt-4 flex flex-wrap gap-x-6 gap-y-1 text-xs text-gray-500">
+                        {c.readouts.slice(0, 3).map((r) => (
+                          <div key={`${r.label}-${r.value}`}>
+                            <dt className="inline">{r.label}: </dt>
+                            <dd className="inline font-medium text-gray-900 dark:text-white">
+                              {r.value}
+                            </dd>
+                          </div>
+                        ))}
+                      </dl>
                     )}
                     {c.services.length > 0 && (
                       <div className="mt-4 flex flex-wrap gap-2">

@@ -111,3 +111,18 @@
 .prose-content td {
   @apply border border-gray-200 px-3 py-2 dark:border-gray-800;
 }
+
+/* Light-on-dark variant — used inside dark case-study conclusion blocks. */
+.prose-content-invert {
+  @apply text-gray-300;
+}
+.prose-content-invert h2,
+.prose-content-invert h3 {
+  @apply text-white;
+}
+.prose-content-invert a {
+  @apply text-brand-400 decoration-brand-500/50 hover:text-brand-300;
+}
+.prose-content-invert blockquote {
+  @apply border-brand-500/50 text-gray-400;
+}

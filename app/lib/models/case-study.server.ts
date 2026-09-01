@@ -25,6 +25,8 @@ export interface CaseStudyAttrs {
   url?: string;
   featured?: boolean;
   order?: number;
+  readouts?: { label: string; value: string }[];
+  sections?: { type: string; data: Record<string, unknown> }[];
   publishedAt?: Date;
   createdAt: Date;
   updatedAt: Date;
@@ -54,6 +56,16 @@ const caseStudySchema = new Schema<CaseStudyAttrs>(
     url: String,
     featured: { type: Boolean, default: false },
     order: Number,
+    readouts: {
+      type: [new Schema({ label: String, value: String }, { _id: false })],
+      default: [],
+    },
+    sections: [
+      new Schema(
+        { type: { type: String }, data: Schema.Types.Mixed },
+        { _id: false },
+      ),
+    ],
     publishedAt: Date,
   },
   { timestamps: true },
