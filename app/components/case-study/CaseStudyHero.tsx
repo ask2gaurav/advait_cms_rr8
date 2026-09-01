@@ -9,11 +9,13 @@ import { GridMotif } from "~/components/visuals/GridMotif";
 export function CaseStudyHero({
   title,
   lead,
+  eyebrow = "Case study",
   readouts = [],
   cover,
 }: {
   title: string;
   lead?: string;
+  eyebrow?: string;
   readouts?: CaseStudyReadout[];
   cover?: MediaPublic;
 }) {
@@ -22,7 +24,7 @@ export function CaseStudyHero({
       <GridMotif className="text-white/[0.06]" />
       <Container className="relative py-16 sm:py-24">
         <p className="mb-3 text-xs font-semibold uppercase tracking-widest text-brand-400">
-          Case study
+          {eyebrow}
         </p>
         <h1 className="max-w-3xl text-4xl font-semibold tracking-tight text-white sm:text-5xl">
           {title}

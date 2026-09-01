@@ -47,6 +47,7 @@ export interface CaseStudyValues {
   url?: string;
   featured?: boolean;
   order?: number;
+  heroEyebrow?: string;
   readoutsJson?: string;
   sectionsJson?: string;
   seoTitle?: string;
@@ -88,6 +89,7 @@ export async function getCaseStudyValues(
     url: d.url,
     featured: d.featured,
     order: d.order,
+    heroEyebrow: d.heroEyebrow,
     readoutsJson: JSON.stringify(d.readouts ?? [], null, 2),
     sectionsJson: JSON.stringify(d.sections ?? [], null, 2),
     seoTitle: d.seoTitle,
@@ -113,6 +115,7 @@ export async function saveCaseStudy(form: FormData, id?: string) {
     client: input.client || undefined,
     industry: input.industry || undefined,
     url: input.url || undefined,
+    heroEyebrow: input.heroEyebrow || undefined,
     seoTitle: input.seoTitle || undefined,
     seoDescription: input.seoDescription || undefined,
     publishedAt: resolvePublishedAt(input.status, doc.publishedAt),

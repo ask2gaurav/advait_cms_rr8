@@ -77,6 +77,7 @@ export const caseStudySchema = z.object({
   url: z.string().trim().url().optional().or(z.literal("")),
   featured: z.coerce.boolean().default(false),
   order: z.coerce.number().int().optional(),
+  heroEyebrow: z.string().trim().max(120).optional().or(z.literal("")),
   ...seo,
 });
 
@@ -90,8 +91,11 @@ const prose = z.string().trim();
 const mediaId = z.string().trim().optional().or(z.literal(""));
 const sectionBase = {
   kicker: z.string().trim().optional().or(z.literal("")),
+  label: z.string().trim().optional().or(z.literal("")),
   title: z.string().trim().optional().or(z.literal("")),
 };
+
+const optStr = z.string().trim().optional().or(z.literal(""));
 
 export const caseStudyReadoutsSchema = z
   .array(
@@ -133,6 +137,28 @@ export const caseStudySectionSchema = z.discriminatedUnion("type", [
         )
         .default([]),
       diagram: mediaId,
+      architecture: z
+        .object({
+          before: z
+            .object({
+              heading: optStr,
+              from: optStr,
+              to: optStr,
+              via: optStr,
+              blocked: optStr,
+            })
+            .optional(),
+          after: z
+            .object({
+              heading: optStr,
+              from: optStr,
+              to: optStr,
+              flows: z.array(z.string().trim()).default([]),
+            })
+            .optional(),
+          caption: prose.optional(),
+        })
+        .optional(),
     }),
   }),
   z.object({
@@ -164,6 +190,15 @@ export const caseStudySectionSchema = z.discriminatedUnion("type", [
             beforeLabel: z.string().trim().optional().or(z.literal("")),
             afterLabel: z.string().trim().optional().or(z.literal("")),
             caption: prose.optional(),
+          }),
+        )
+        .default([]),
+      showcase: z
+        .array(
+          z.object({
+            image: mediaId,
+            label: optStr,
+            body: prose.optional(),
           }),
         )
         .default([]),

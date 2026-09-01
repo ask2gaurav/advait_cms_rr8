@@ -4,6 +4,7 @@ import { Section, Container } from "~/components/layout/Section";
 import { Prose } from "~/components/site";
 import { Badge } from "~/components/ui/Badge";
 import { cn } from "~/lib/utils";
+import { BeforeAfterDiagram } from "~/components/case-study/BeforeAfterDiagram";
 
 /* ------------------------------------------------------------------ helpers */
 
@@ -31,7 +32,7 @@ function SectionShell({
             {kicker && (
               <p
                 className={cn(
-                  "font-mono text-sm",
+                  "font-mono text-base font-semibold uppercase tracking-wide",
                   onDark ? "text-brand-400" : "text-brand-600 dark:text-brand-400",
                 )}
               >
@@ -41,7 +42,7 @@ function SectionShell({
             {title && (
               <h2
                 className={cn(
-                  "mt-2 text-3xl font-semibold tracking-tight sm:text-4xl",
+                  "mt-3 text-3xl font-semibold tracking-tight sm:text-4xl",
                   onDark ? "text-white" : "text-gray-900 dark:text-white",
                 )}
               >
@@ -131,6 +132,9 @@ function JourneySection({ data }: { data: Data<"journey"> }) {
           </li>
         ))}
       </ol>
+      {data.architecture && (
+        <BeforeAfterDiagram architecture={data.architecture} />
+      )}
       {data.diagram && (
         <figure className="mt-10">
           <img
@@ -214,6 +218,7 @@ function EvolutionShot({
 }
 
 function EvolutionSection({ data }: { data: Data<"evolution"> }) {
+  const showcase = data.showcase ?? [];
   return (
     <SectionShell kicker={data.kicker} title={data.title} ledeHtml={data.ledeHtml}>
       <div className="space-y-12">
@@ -231,6 +236,34 @@ function EvolutionSection({ data }: { data: Data<"evolution"> }) {
           </div>
         ))}
       </div>
+
+      {showcase.length > 0 && (
+        <div className="mt-14 grid gap-8 sm:grid-cols-2">
+          {showcase.map((item, i) => (
+            <div key={i}>
+              {item.image && (
+                <img
+                  src={item.image.path}
+                  alt={item.image.alt ?? ""}
+                  width={item.image.width ?? 800}
+                  height={item.image.height ?? 600}
+                  loading="lazy"
+                  decoding="async"
+                  className="mb-3 w-full rounded-lg border border-gray-200 object-cover dark:border-gray-800"
+                />
+              )}
+              <p className="text-xs font-semibold uppercase tracking-widest text-brand-600 dark:text-brand-400">
+                {item.label || "New in Production"}
+              </p>
+              {item.bodyHtml && (
+                <div className="mt-2 text-sm text-gray-600 dark:text-gray-400">
+                  <Prose html={item.bodyHtml} />
+                </div>
+              )}
+            </div>
+          ))}
+        </div>
+      )}
     </SectionShell>
   );
 }
@@ -305,7 +338,17 @@ const NUMBERED = new Set<CaseStudySectionPublic["type"]>([
   "solution",
   "evolution",
   "results",
+  "conclusion",
 ]);
+
+/** Final eyebrow string: explicit `kicker` wins, else `NN — label`. */
+function composeKicker(
+  data: { kicker?: string; label?: string },
+  autoNumber?: string,
+): string | undefined {
+  if (data.kicker) return data.kicker;
+  return [autoNumber, data.label].filter(Boolean).join(" — ") || undefined;
+}
 
 export function CaseStudySections({
   sections = [],
@@ -316,7 +359,7 @@ export function CaseStudySections({
   return (
     <>
       {sections.map((section, i) => {
-        const autoKicker = NUMBERED.has(section.type)
+        const autoNumber = NUMBERED.has(section.type)
           ? String(++n).padStart(2, "0")
           : undefined;
         switch (section.type) {
@@ -324,39 +367,44 @@ export function CaseStudySections({
             return (
               <ChallengeSection
                 key={i}
-                data={{ ...section.data, kicker: section.data.kicker || autoKicker }}
+                data={{ ...section.data, kicker: composeKicker(section.data, autoNumber) }}
               />
             );
           case "journey":
             return (
               <JourneySection
                 key={i}
-                data={{ ...section.data, kicker: section.data.kicker || autoKicker }}
+                data={{ ...section.data, kicker: composeKicker(section.data, autoNumber) }}
               />
             );
           case "solution":
             return (
               <SolutionSection
                 key={i}
-                data={{ ...section.data, kicker: section.data.kicker || autoKicker }}
+                data={{ ...section.data, kicker: composeKicker(section.data, autoNumber) }}
               />
             );
           case "evolution":
             return (
               <EvolutionSection
                 key={i}
-                data={{ ...section.data, kicker: section.data.kicker || autoKicker }}
+                data={{ ...section.data, kicker: composeKicker(section.data, autoNumber) }}
               />
             );
           case "results":
             return (
               <ResultsSection
                 key={i}
-                data={{ ...section.data, kicker: section.data.kicker || autoKicker }}
+                data={{ ...section.data, kicker: composeKicker(section.data, autoNumber) }}
               />
             );
           case "conclusion":
-            return <ConclusionSection key={i} data={section.data} />;
+            return (
+              <ConclusionSection
+                key={i}
+                data={{ ...section.data, kicker: composeKicker(section.data, autoNumber) }}
+              />
+            );
           case "prose":
             return <ProseSection key={i} data={section.data} />;
           default:

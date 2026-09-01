@@ -59,10 +59,17 @@ function collectSectionMediaIds(
   for (const raw of sections as RawSection[]) {
     const data = raw?.data ?? {};
     if (raw?.type === "journey") add(data.diagram);
-    if (raw?.type === "evolution" && Array.isArray(data.rows)) {
-      for (const row of data.rows as Record<string, unknown>[]) {
-        add(row.before);
-        add(row.after);
+    if (raw?.type === "evolution") {
+      if (Array.isArray(data.rows)) {
+        for (const row of data.rows as Record<string, unknown>[]) {
+          add(row.before);
+          add(row.after);
+        }
+      }
+      if (Array.isArray(data.showcase)) {
+        for (const s of data.showcase as Record<string, unknown>[]) {
+          add(s.image);
+        }
       }
     }
   }
@@ -80,10 +87,14 @@ function buildCaseStudySections(
   const arr = (v: unknown): Record<string, unknown>[] =>
     Array.isArray(v) ? (v as Record<string, unknown>[]) : [];
 
+  const obj = (v: unknown): Record<string, unknown> =>
+    v && typeof v === "object" ? (v as Record<string, unknown>) : {};
+
   const out: CaseStudySectionPublic[] = [];
   for (const raw of sections as RawSection[]) {
     const d = raw?.data ?? {};
     const kicker = str(d.kicker) || undefined;
+    const label = str(d.label) || undefined;
     const title = str(d.title) || undefined;
     switch (raw?.type) {
       case "challenge":
@@ -91,6 +102,7 @@ function buildCaseStudySections(
           type: "challenge",
           data: {
             kicker,
+            label,
             title,
             introHtml: proseToHtml(d.intro),
             items: arr(d.items).map((i) => ({
@@ -100,11 +112,17 @@ function buildCaseStudySections(
           },
         });
         break;
-      case "journey":
+      case "journey": {
+        const a = obj(d.architecture);
+        const aBefore = obj(a.before);
+        const aAfter = obj(a.after);
+        const hasArchitecture =
+          d.architecture && (Object.keys(aBefore).length || Object.keys(aAfter).length);
         out.push({
           type: "journey",
           data: {
             kicker,
+            label,
             title,
             ledeHtml: proseToHtml(d.lede),
             nodes: arr(d.nodes).map((n) => ({
@@ -114,14 +132,36 @@ function buildCaseStudySections(
               bodyHtml: proseToHtml(n.body),
             })),
             diagram: pic(d.diagram),
+            architecture: hasArchitecture
+              ? {
+                  before: {
+                    heading: str(aBefore.heading),
+                    from: str(aBefore.from),
+                    to: str(aBefore.to),
+                    via: str(aBefore.via),
+                    blocked: str(aBefore.blocked),
+                  },
+                  after: {
+                    heading: str(aAfter.heading),
+                    from: str(aAfter.from),
+                    to: str(aAfter.to),
+                    flows: Array.isArray(aAfter.flows)
+                      ? (aAfter.flows as string[])
+                      : [],
+                  },
+                  captionHtml: proseToHtml(a.caption),
+                }
+              : undefined,
           },
         });
         break;
+      }
       case "solution":
         out.push({
           type: "solution",
           data: {
             kicker,
+            label,
             title,
             ledeHtml: proseToHtml(d.lede),
             cards: arr(d.cards).map((c) => ({
@@ -137,6 +177,7 @@ function buildCaseStudySections(
           type: "evolution",
           data: {
             kicker,
+            label,
             title,
             ledeHtml: proseToHtml(d.lede),
             rows: arr(d.rows).map((r) => ({
@@ -146,6 +187,11 @@ function buildCaseStudySections(
               afterLabel: str(r.afterLabel),
               captionHtml: proseToHtml(r.caption),
             })),
+            showcase: arr(d.showcase).map((s) => ({
+              image: pic(s.image),
+              label: str(s.label),
+              bodyHtml: proseToHtml(s.body),
+            })),
           },
         });
         break;
@@ -154,6 +200,7 @@ function buildCaseStudySections(
           type: "results",
           data: {
             kicker,
+            label,
             title,
             ledeHtml: proseToHtml(d.lede),
             tiles: arr(d.tiles).map((t) => ({
@@ -169,6 +216,7 @@ function buildCaseStudySections(
           type: "conclusion",
           data: {
             kicker,
+            label,
             title,
             ledeHtml: proseToHtml(d.lede),
             bodyHtml: proseToHtml(d.body),
@@ -306,6 +354,7 @@ export async function exportContent() {
       url: c.url,
       featured: c.featured,
       order: c.order,
+      heroEyebrow: c.heroEyebrow,
       readouts: (c.readouts ?? []).map((r) => ({
         label: String(r.label ?? ""),
         value: String(r.value ?? ""),

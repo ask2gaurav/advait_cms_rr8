@@ -59,6 +59,7 @@ export default function CaseStudyDetail({ loaderData }: Route.ComponentProps) {
       <CaseStudyHero
         title={c.title}
         lead={c.excerpt}
+        eyebrow={c.heroEyebrow || undefined}
         readouts={c.readouts ?? []}
         cover={c.coverImage}
       />

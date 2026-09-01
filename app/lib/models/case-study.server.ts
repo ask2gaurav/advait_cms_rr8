@@ -13,6 +13,7 @@ export interface CaseStudyAttrs {
   status: ContentStatus;
   seoTitle?: string;
   seoDescription?: string;
+  heroEyebrow?: string;
   excerpt?: string;
   body: unknown;
   coverImage?: Types.ObjectId;
@@ -44,6 +45,7 @@ const caseStudySchema = new Schema<CaseStudyAttrs>(
     },
     seoTitle: String,
     seoDescription: String,
+    heroEyebrow: String,
     excerpt: String,
     body: { type: Schema.Types.Mixed, default: null },
     coverImage: { type: Schema.Types.ObjectId, ref: "Media" },

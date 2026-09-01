@@ -68,11 +68,30 @@ export interface CaseStudyReadout {
  * produced from plain author prose at export time; media ids are resolved to
  * `MediaPublic` (dropped when unresolved).
  */
+/** Rebuilt-in-HTML before/after architecture diagram (journey section). */
+export interface CaseStudyArchitecturePublic {
+  before?: {
+    heading?: string;
+    from?: string;
+    to?: string;
+    via?: string;
+    blocked?: string;
+  };
+  after?: {
+    heading?: string;
+    from?: string;
+    to?: string;
+    flows: string[];
+  };
+  captionHtml?: string;
+}
+
 export type CaseStudySectionPublic =
   | {
       type: "challenge";
       data: {
         kicker?: string;
+        label?: string;
         title?: string;
         introHtml?: string;
         items: { title: string; bodyHtml?: string }[];
@@ -82,6 +101,7 @@ export type CaseStudySectionPublic =
       type: "journey";
       data: {
         kicker?: string;
+        label?: string;
         title?: string;
         ledeHtml?: string;
         nodes: {
@@ -90,12 +110,14 @@ export type CaseStudySectionPublic =
           bodyHtml?: string;
         }[];
         diagram?: MediaPublic;
+        architecture?: CaseStudyArchitecturePublic;
       };
     }
   | {
       type: "solution";
       data: {
         kicker?: string;
+        label?: string;
         title?: string;
         ledeHtml?: string;
         cards: { title: string; bodyHtml?: string; tags: string[] }[];
@@ -105,6 +127,7 @@ export type CaseStudySectionPublic =
       type: "evolution";
       data: {
         kicker?: string;
+        label?: string;
         title?: string;
         ledeHtml?: string;
         rows: {
@@ -114,12 +137,18 @@ export type CaseStudySectionPublic =
           afterLabel?: string;
           captionHtml?: string;
         }[];
+        showcase: {
+          image?: MediaPublic;
+          label?: string;
+          bodyHtml?: string;
+        }[];
       };
     }
   | {
       type: "results";
       data: {
         kicker?: string;
+        label?: string;
         title?: string;
         ledeHtml?: string;
         tiles: { value: string; label: string; detail?: string }[];
@@ -129,6 +158,7 @@ export type CaseStudySectionPublic =
       type: "conclusion";
       data: {
         kicker?: string;
+        label?: string;
         title?: string;
         ledeHtml?: string;
         bodyHtml?: string;
@@ -155,6 +185,7 @@ export interface CaseStudyPublic extends SeoFields {
   url?: string;
   featured?: boolean;
   order?: number;
+  heroEyebrow?: string;
   readouts: CaseStudyReadout[];
   sections: CaseStudySectionPublic[];
   publishedAt?: string;

@@ -144,6 +144,7 @@ async function main() {
           "AI-accelerated delivery",
         ],
         year: 2025,
+        heroEyebrow: "Case Study — Hydrotherapy Control System",
         excerpt:
           "We paired two decades of experience building software that isn't allowed to fail with AI-accelerated engineering to take a hydrotherapy device from concept to a production-grade Android platform — native hardware control, cloud sync, and a full clinic workflow included — in under a month.",
         seoDescription:
@@ -164,6 +165,7 @@ async function main() {
           {
             type: "challenge",
             data: {
+              label: "The Challenge",
               title:
                 "A Medical-Adjacent Device, a Fragile Foundation, and a Month on the Clock",
               intro:
@@ -187,6 +189,7 @@ async function main() {
           {
             type: "journey",
             data: {
+              label: "Our Approach & the Technical Journey",
               title: "Three Attempts, One Real Architecture",
               lede: "Good engineering here wasn't about writing more code, faster. It was about recognizing, quickly, when an approach had hit a genuine ceiling — and pivoting before it cost us weeks we didn't have.",
               nodes: [
@@ -206,6 +209,23 @@ async function main() {
                   body: "Recognizing the ceiling early, we moved the client off the web platform entirely, rebuilding it as a native Android app with Capacitor. That single architectural move unlocked what the browser never could: the tablet creates its own WiFi hotspot, the ESP32 joins it in Station Mode, and the two now talk over a connection the app fully owns — live sensor telemetry flowing in, hardware commands flowing out, no router and no discovery protocol left to fail.",
                 },
               ],
+              architecture: {
+                before: {
+                  heading: "Before — PWA in browser",
+                  from: "Tablet · PWA (browser)",
+                  to: "ESP32 · AP mode",
+                  via: "mDNS / in-browser relay",
+                  blocked: "blocked by browser sandbox",
+                },
+                after: {
+                  heading: "After — Native Android (Capacitor)",
+                  from: "Tablet · Native app · hosts Wi-Fi hotspot",
+                  to: "ESP32 · Station mode",
+                  flows: ["sensor telemetry", "hardware commands"],
+                },
+                caption:
+                  "Two dead ends the client tried to reach the machine from inside a browser, both stopped by real platform boundaries — and the native rebuild that finally gave the app a connection it fully owns, in both directions.",
+              },
             },
           },
           {
@@ -217,6 +237,7 @@ async function main() {
           {
             type: "solution",
             data: {
+              label: "The Solution",
               title: "One Connected System, Not a Pile of Screens",
               lede: "The finished architecture keeps the hardware deliberately dumb and puts every ounce of intelligence — and every business rule — in the app.",
               cards: [
@@ -246,6 +267,7 @@ async function main() {
           {
             type: "evolution",
             data: {
+              label: "Design Evolution",
               title: 'From "Show Everything" to "Show What\'s Needed"',
               lede: "The early concepts followed the brief closely — a classic engineer's-eye dashboard, every metric and every gauge on screen at once. Good instinct for coverage; wrong instinct for a therapist standing at a tablet mid-session.",
               rows: [
@@ -268,11 +290,22 @@ async function main() {
                     "Early role-and-permissions thinking became a straightforward, searchable Manage Therapists / Manage Patients list — the access-control problem solved once, structurally, in the backend, rather than surfaced as another screen for the operator to configure.",
                 },
               ],
+              showcase: [
+                {
+                  label: "New in Production",
+                  body: "Demo Mode wasn't in the original screen list — it's the licensing engine described above, given a face: a lock screen that tells the therapist exactly why the device stopped, and exactly who to call.",
+                },
+                {
+                  label: "New in Production",
+                  body: "And on the other end of that phone call: a Supplier panel where extending a demo or activating a machine is two clicks, not a support ticket.",
+                },
+              ],
             },
           },
           {
             type: "results",
             data: {
+              label: "Key Results & Impact",
               title: "What Shipped, in Under a Month",
               tiles: [
                 {
@@ -302,6 +335,7 @@ async function main() {
           {
             type: "conclusion",
             data: {
+              label: "Why This Matters",
               title: "Judgment, Applied at AI Speed",
               lede: 'Most "AI-accelerated" delivery stories are about typing faster. This one is about a team that has spent twenty-plus years learning exactly where systems break — connectivity, hardware boundaries, real clinic conditions — and now has the tooling to build around that judgment at a speed that used to be impossible.',
               body: "That combination is what let a medical-adjacent device go from a whiteboard sketch to a machine running real therapy sessions in under a month, without cutting the corners a device like this can't afford to cut.",

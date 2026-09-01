@@ -154,6 +154,7 @@ Flexible pages (Home, About, Approach, Contact, or any custom page).
   seoTitle?: string;
   seoDescription?: string;
   // Content
+  heroEyebrow?: string;           // small label above the hero title ("Case Study — X")
   excerpt?: string;
   body: unknown;                  // BlockNote / Tiptap JSON
   coverImage?: ObjectId;          // → Media
@@ -177,7 +178,10 @@ Flexible pages (Home, About, Approach, Contact, or any custom page).
       | "conclusion"
       | "prose";
     data: Record<string, unknown>;  // prose fields are plain strings,
-                                    // media fields are Media ObjectId strings
+                                    // media fields are Media ObjectId strings.
+                                    // data.label → eyebrow suffix ("01 — The Challenge");
+                                    // journey.architecture → before/after diagram;
+                                    // evolution.showcase → "new in production" items
   }>;
   // Meta
   featured?: boolean;

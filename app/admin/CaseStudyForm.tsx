@@ -37,6 +37,13 @@ export function CaseStudyForm({
       <TextField name="slug" label="Slug" defaultValue={values.slug} error={fe.slug} hint="Leave blank on create to auto-generate." />
       <SelectField name="status" label="Status" options={STATUS} defaultValue={values.status ?? "draft"} error={fe.status} />
       <TextareaField name="excerpt" label="Excerpt" defaultValue={values.excerpt} error={fe.excerpt} />
+      <TextField
+        name="heroEyebrow"
+        label="Hero eyebrow"
+        defaultValue={values.heroEyebrow}
+        error={fe.heroEyebrow}
+        hint='Small label above the hero title. Defaults to "Case study". e.g. "Case Study — Hydrotherapy Control System"'
+      />
       <Field
         label="Body"
         error={fe.body}
@@ -47,7 +54,7 @@ export function CaseStudyForm({
       <Field
         label="Sections (JSON)"
         error={fe.sectionsJson}
-        hint='Ordered array of { type, data }. type: challenge | journey | solution | evolution | results | conclusion | prose. Prose fields are plain paragraphs (blank line = new paragraph); inline HTML allowed, no Markdown.'
+        hint='Ordered array of { type, data }. type: challenge | journey | solution | evolution | results | conclusion | prose. data.label sets the eyebrow suffix ("01 — The Challenge"). journey.data.architecture = { before:{heading,from,to,via,blocked}, after:{heading,from,to,flows:[]}, caption } renders the before/after diagram. evolution.data.showcase = [{ image?, label?, body }]. Prose fields are plain paragraphs (blank line = new paragraph); inline HTML allowed, no Markdown.'
       >
         <Textarea
           name="sectionsJson"
