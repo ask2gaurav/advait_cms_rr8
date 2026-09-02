@@ -1,7 +1,7 @@
 import { connectDb } from "~/lib/db.server";
 import { Post } from "~/lib/models/post.server";
 import { postSchema, parseForm } from "~/lib/validation";
-import { resolvePublishedAt } from "~/lib/admin.server";
+import { inferBodyFormat, resolvePublishedAt } from "~/lib/admin.server";
 import { toSlug } from "~/lib/slug";
 import type { PostValues } from "~/admin/PostForm";
 
@@ -26,7 +26,8 @@ export async function getPostValues(id: string): Promise<PostValues | null> {
     slug: d.slug,
     status: d.status,
     excerpt: d.excerpt,
-    body: Array.isArray(d.body) ? (d.body as unknown[]) : [],
+    body: d.body ?? null,
+    bodyFormat: inferBodyFormat(d.body, d.bodyFormat),
     coverImage: d.coverImage ? String(d.coverImage) : "",
     ogImage: d.ogImage ? String(d.ogImage) : "",
     tags: d.tags,
@@ -49,6 +50,7 @@ export async function savePost(form: FormData, id?: string) {
   doc.set({
     ...input,
     slug,
+    bodyFormat: input.bodyFormat || "blocknote",
     coverImage: input.coverImage || undefined,
     ogImage: input.ogImage || undefined,
     author: input.author || undefined,

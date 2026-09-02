@@ -12,13 +12,15 @@ import { Input } from "~/components/ui/input";
 import { Textarea } from "~/components/ui/textarea";
 import { RichTextEditor } from "~/admin/RichTextEditor";
 import { MediaField } from "~/admin/MediaField";
+import { useEditorChoice } from "~/admin/useEditorChoice";
 
 export interface PostValues {
   title?: string;
   slug?: string;
   status?: string;
   excerpt?: string;
-  body?: unknown[];
+  body?: unknown;
+  bodyFormat?: "blocknote" | "lexical";
   coverImage?: string;
   ogImage?: string;
   tags?: string[];
@@ -46,6 +48,7 @@ export function PostForm({
 }) {
   const nav = useNavigation();
   const fe = errors?.fieldErrors ?? {};
+  const format = values.bodyFormat ?? useEditorChoice();
 
   return (
     <Form method="post" className="max-w-2xl space-y-5">
@@ -64,7 +67,7 @@ export function PostForm({
       <TextareaField name="excerpt" label="Excerpt" defaultValue={values.excerpt} error={fe.excerpt} />
 
       <Field label="Body" error={fe.body}>
-        <RichTextEditor name="body" initialContent={values.body} />
+        <RichTextEditor name="body" format={format} initialContent={values.body} />
       </Field>
 
       <TextField name="tags" label="Tags" defaultValue={values.tags?.join(", ")} hint="Comma-separated" />

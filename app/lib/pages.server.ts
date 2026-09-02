@@ -1,7 +1,7 @@
 import { connectDb } from "~/lib/db.server";
 import { Page } from "~/lib/models/page.server";
 import { pageSchema, parseForm } from "~/lib/validation";
-import { resolvePublishedAt } from "~/lib/admin.server";
+import { inferBodyFormat, resolvePublishedAt } from "~/lib/admin.server";
 import { toSlug } from "~/lib/slug";
 
 export interface PageValues {
@@ -10,7 +10,8 @@ export interface PageValues {
   status?: string;
   template?: string;
   excerpt?: string;
-  body?: unknown[];
+  body?: unknown;
+  bodyFormat?: "blocknote" | "lexical";
   ogImage?: string;
   seoTitle?: string;
   seoDescription?: string;
@@ -39,7 +40,8 @@ export async function getPageValues(id: string): Promise<PageValues | null> {
     status: d.status,
     template: d.template,
     excerpt: d.excerpt,
-    body: Array.isArray(d.body) ? (d.body as unknown[]) : [],
+    body: d.body ?? null,
+    bodyFormat: inferBodyFormat(d.body, d.bodyFormat),
     ogImage: d.ogImage ? String(d.ogImage) : "",
     seoTitle: d.seoTitle,
     seoDescription: d.seoDescription,
@@ -55,6 +57,7 @@ export async function savePage(form: FormData, id?: string) {
   doc.set({
     ...input,
     slug,
+    bodyFormat: input.bodyFormat || "blocknote",
     ogImage: input.ogImage || undefined,
     seoTitle: input.seoTitle || undefined,
     seoDescription: input.seoDescription || undefined,

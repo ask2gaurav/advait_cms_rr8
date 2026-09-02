@@ -11,6 +11,7 @@ import {
 } from "~/admin/form";
 import { RichTextEditor } from "~/admin/RichTextEditor";
 import { MediaField } from "~/admin/MediaField";
+import { useEditorChoice } from "~/admin/useEditorChoice";
 import { Textarea } from "~/components/ui/textarea";
 
 const STATUS = [
@@ -30,6 +31,7 @@ export function CaseStudyForm({
 }) {
   const nav = useNavigation();
   const fe = errors?.fieldErrors ?? {};
+  const format = values.bodyFormat ?? useEditorChoice();
   return (
     <Form method="post" className="max-w-2xl space-y-5">
       {errors?.formError && <p className="text-sm text-red-600">{errors.formError}</p>}
@@ -49,7 +51,7 @@ export function CaseStudyForm({
         error={fe.body}
         hint="Optional long-form fallback — shown only when Sections is empty."
       >
-        <RichTextEditor name="body" initialContent={values.body} />
+        <RichTextEditor name="body" format={format} initialContent={values.body} />
       </Field>
       <Field
         label="Sections (JSON)"

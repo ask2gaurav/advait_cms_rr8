@@ -17,6 +17,7 @@ export interface PageAttrs {
   ogImage?: Types.ObjectId;
   excerpt?: string;
   body: unknown;
+  bodyFormat?: string;
   sections?: { type: string; data: Record<string, unknown> }[];
   order?: number;
   publishedAt?: Date;
@@ -40,6 +41,11 @@ const pageSchema = new Schema<PageAttrs>(
     ogImage: { type: Schema.Types.ObjectId, ref: "Media" },
     excerpt: String,
     body: { type: Schema.Types.Mixed, default: null },
+    bodyFormat: {
+      type: String,
+      enum: ["blocknote", "lexical"],
+      default: "blocknote",
+    },
     sections: [{ type: { type: String }, data: Schema.Types.Mixed }],
     order: Number,
     publishedAt: Date,

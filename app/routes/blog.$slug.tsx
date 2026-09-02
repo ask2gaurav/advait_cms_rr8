@@ -6,6 +6,7 @@ import { Container, JsonLd, Prose } from "~/components/site";
 import { Section } from "~/components/layout/Section";
 import { Badge } from "~/components/ui/Badge";
 import { Giscus } from "~/components/Giscus";
+import { Img } from "~/components/Img";
 
 export function meta({ loaderData }: Route.MetaArgs) {
   if (!loaderData?.post) return buildMeta({ title: "Not found", noindex: true });
@@ -68,13 +69,11 @@ export default function BlogPost({ loaderData }: Route.ComponentProps) {
           {post.title}
         </h1>
         {post.coverImage && (
-          <img
-            src={post.coverImage.path}
+          <Img
+            media={post.coverImage}
             alt={post.coverImage.alt ?? post.title}
-            width={post.coverImage.width ?? 1200}
-            height={post.coverImage.height ?? 630}
-            loading="lazy"
-            decoding="async"
+            priority
+            sizes="(min-width: 768px) 768px, 100vw"
             className="my-8 w-full rounded-xl object-cover"
           />
         )}

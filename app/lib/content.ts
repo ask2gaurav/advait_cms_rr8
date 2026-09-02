@@ -7,8 +7,10 @@ import postsJson from "../../content/posts.json";
 import casesJson from "../../content/case-studies.json";
 import menusJson from "../../content/menus.json";
 import settingsJson from "../../content/settings.json";
+import historyJson from "../../content/company-history.json";
 import type {
   CaseStudyPublic,
+  CompanyHistoryPublic,
   MenuPublic,
   PagePublic,
   PostPublic,
@@ -20,9 +22,14 @@ const posts = postsJson as unknown as PostPublic[];
 const cases = casesJson as unknown as CaseStudyPublic[];
 const menus = menusJson as unknown as MenuPublic[];
 const settings = settingsJson as unknown as SettingsPublic;
+const companyHistory = historyJson as unknown as CompanyHistoryPublic;
 
 export function getSettings(): SettingsPublic {
   return settings;
+}
+
+export function getCompanyHistory(): CompanyHistoryPublic {
+  return companyHistory;
 }
 
 export function getMenu(location: string): MenuPublic | undefined {

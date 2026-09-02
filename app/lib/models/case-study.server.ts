@@ -16,6 +16,7 @@ export interface CaseStudyAttrs {
   heroEyebrow?: string;
   excerpt?: string;
   body: unknown;
+  bodyFormat?: string;
   coverImage?: Types.ObjectId;
   ogImage?: Types.ObjectId;
   gallery: Types.ObjectId[];
@@ -48,6 +49,11 @@ const caseStudySchema = new Schema<CaseStudyAttrs>(
     heroEyebrow: String,
     excerpt: String,
     body: { type: Schema.Types.Mixed, default: null },
+    bodyFormat: {
+      type: String,
+      enum: ["blocknote", "lexical"],
+      default: "blocknote",
+    },
     coverImage: { type: Schema.Types.ObjectId, ref: "Media" },
     ogImage: { type: Schema.Types.ObjectId, ref: "Media" },
     gallery: { type: [{ type: Schema.Types.ObjectId, ref: "Media" }], default: [] },

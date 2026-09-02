@@ -2,7 +2,13 @@ import { Form, useNavigation } from "react-router";
 import type { Route } from "./+types/settings";
 import { getSettingsValues, saveSettings } from "~/lib/settings.server";
 import { saveOrError } from "~/lib/admin.server";
-import { PageHeader, TextField, TextareaField, FormActions } from "~/admin/form";
+import {
+  PageHeader,
+  TextField,
+  TextareaField,
+  SelectField,
+  FormActions,
+} from "~/admin/form";
 
 export function meta() {
   return [{ title: "Settings — Admin" }];
@@ -36,7 +42,24 @@ export default function Settings({ loaderData, actionData }: Route.ComponentProp
         <TextareaField name="defaultSeoDescription" label="Default SEO description" defaultValue={v.defaultSeoDescription} />
         <TextField name="contactEmail" label="Contact email" defaultValue={v.contactEmail} error={fe.contactEmail} />
         <TextField name="contactPhone" label="Contact phone" defaultValue={v.contactPhone} />
-        <TextareaField name="address" label="Address" defaultValue={v.address} />
+        <TextareaField name="address" label="Address" defaultValue={v.address} hint="Postal address. Shown on the footer and contact page." />
+        <TextareaField name="clients" label="Clients" defaultValue={v.clients} hint="Regions / clients line, shown below the address." />
+        <fieldset className="space-y-4 rounded-md border border-gray-200 p-4 dark:border-gray-800">
+          <legend className="px-1 text-sm font-medium">Editing</legend>
+          <SelectField
+            name="editor"
+            label="Rich-text editor"
+            options={[
+              { value: "blocknote", label: "BlockNote" },
+              { value: "lexical", label: "Lexical" },
+            ]}
+            defaultValue={v.editor ?? "blocknote"}
+          />
+          <p className="text-xs text-gray-500">
+            Editor used for new pages, posts and case studies. Existing content
+            keeps whichever editor it was created with.
+          </p>
+        </fieldset>
         <fieldset className="space-y-4 rounded-md border border-gray-200 p-4 dark:border-gray-800">
           <legend className="px-1 text-sm font-medium">Social</legend>
           <TextField name="twitter" label="Twitter / X URL" defaultValue={v.twitter} />

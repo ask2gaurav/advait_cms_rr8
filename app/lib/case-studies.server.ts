@@ -1,4 +1,3 @@
-import type { z } from "zod";
 import { connectDb } from "~/lib/db.server";
 import { CaseStudy } from "~/lib/models/case-study.server";
 import {
@@ -7,36 +6,20 @@ import {
   caseStudySectionsSchema,
   parseForm,
 } from "~/lib/validation";
-import { FieldError, resolvePublishedAt } from "~/lib/admin.server";
+import {
+  inferBodyFormat,
+  parseJsonField,
+  resolvePublishedAt,
+} from "~/lib/admin.server";
 import { toSlug } from "~/lib/slug";
-
-/** Parse + validate a JSON-encoded form field (sections / readouts). */
-function parseJsonField<T>(
-  form: FormData,
-  name: string,
-  schema: z.ZodType<T>,
-): T {
-  let parsed: unknown;
-  try {
-    parsed = JSON.parse(String(form.get(name) ?? "[]"));
-  } catch {
-    throw new FieldError(name, "Must be valid JSON.");
-  }
-  const result = schema.safeParse(parsed);
-  if (!result.success) {
-    const issue = result.error.issues[0];
-    const path = issue?.path.length ? `${issue.path.join(".")}: ` : "";
-    throw new FieldError(name, `${path}${issue?.message ?? "Invalid data."}`);
-  }
-  return result.data;
-}
 
 export interface CaseStudyValues {
   title?: string;
   slug?: string;
   status?: string;
   excerpt?: string;
-  body?: unknown[];
+  body?: unknown;
+  bodyFormat?: "blocknote" | "lexical";
   coverImage?: string;
   ogImage?: string;
   gallery?: string[];
@@ -78,7 +61,8 @@ export async function getCaseStudyValues(
     slug: d.slug,
     status: d.status,
     excerpt: d.excerpt,
-    body: Array.isArray(d.body) ? (d.body as unknown[]) : [],
+    body: d.body ?? null,
+    bodyFormat: inferBodyFormat(d.body, d.bodyFormat),
     coverImage: d.coverImage ? String(d.coverImage) : "",
     ogImage: d.ogImage ? String(d.ogImage) : "",
     gallery: (d.gallery ?? []).map(String),
@@ -110,6 +94,7 @@ export async function saveCaseStudy(form: FormData, id?: string) {
     slug,
     readouts,
     sections,
+    bodyFormat: input.bodyFormat || "blocknote",
     coverImage: input.coverImage || undefined,
     ogImage: input.ogImage || undefined,
     client: input.client || undefined,

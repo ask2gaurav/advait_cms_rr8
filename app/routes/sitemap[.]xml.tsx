@@ -15,6 +15,7 @@ export function loader() {
     "/products",
     "/works",
     "/blog",
+    "/history",
     "/contact",
     ...listCustomPageSlugs().map((s) => `/${s}`),
     ...listPosts().map((p) => `/blog/${p.slug}`),

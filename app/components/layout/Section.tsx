@@ -23,7 +23,7 @@ export function Section({
 }: {
   as?: ElementType;
   bg?: Bg;
-  spacing?: "default" | "compact" | "loose";
+  spacing?: "default" | "compact" | "loose" | "compact-case-study";
   id?: string;
   cmsSection?: string;
   className?: string;
@@ -35,6 +35,7 @@ export function Section({
       data-cms-section={cmsSection}
       className={cn(
         "relative",
+        spacing === "compact-case-study" && "py-2 sm:py-6",
         spacing === "compact" && "py-12 sm:py-16",
         spacing === "default" && "py-16 sm:py-24",
         spacing === "loose" && "py-20 sm:py-32",

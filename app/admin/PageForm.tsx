@@ -10,6 +10,7 @@ import {
 } from "~/admin/form";
 import { RichTextEditor } from "~/admin/RichTextEditor";
 import { MediaField } from "~/admin/MediaField";
+import { useEditorChoice } from "~/admin/useEditorChoice";
 
 const STATUS = [
   { value: "draft", label: "Draft" },
@@ -37,6 +38,7 @@ export function PageForm({
 }) {
   const nav = useNavigation();
   const fe = errors?.fieldErrors ?? {};
+  const format = values.bodyFormat ?? useEditorChoice();
   return (
     <Form method="post" className="max-w-2xl space-y-5">
       {errors?.formError && <p className="text-sm text-red-600">{errors.formError}</p>}
@@ -46,7 +48,7 @@ export function PageForm({
       <SelectField name="template" label="Template" options={TEMPLATES} defaultValue={values.template ?? "default"} error={fe.template} />
       <TextareaField name="excerpt" label="Excerpt" defaultValue={values.excerpt} error={fe.excerpt} />
       <Field label="Body" error={fe.body}>
-        <RichTextEditor name="body" initialContent={values.body} />
+        <RichTextEditor name="body" format={format} initialContent={values.body} />
       </Field>
       <fieldset className="space-y-4 rounded-md border border-gray-200 p-4 dark:border-gray-800">
         <legend className="px-1 text-sm font-medium">SEO</legend>

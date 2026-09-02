@@ -8,6 +8,7 @@ import { Section } from "~/components/layout/Section";
 import { FinalCta } from "~/components/home/FinalCta";
 import { CaseStudyHero } from "~/components/case-study/CaseStudyHero";
 import { CaseStudySections } from "~/components/case-study/CaseStudySections";
+import { Img } from "~/components/Img";
 
 export function meta({ loaderData }: Route.MetaArgs) {
   if (!loaderData?.item) return buildMeta({ title: "Not found", noindex: true });
@@ -103,14 +104,10 @@ export default function CaseStudyDetail({ loaderData }: Route.ComponentProps) {
           {c.gallery.length > 0 && (
             <div className="grid gap-6 sm:grid-cols-2">
               {c.gallery.map((g) => (
-                <img
+                <Img
                   key={g.path}
-                  src={g.path}
-                  alt={g.alt ?? ""}
-                  width={g.width ?? 800}
-                  height={g.height ?? 600}
-                  loading="lazy"
-                  decoding="async"
+                  media={g}
+                  sizes="(min-width: 640px) 540px, 100vw"
                   className="w-full rounded-xl object-cover"
                 />
               ))}

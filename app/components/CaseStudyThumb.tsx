@@ -1,17 +1,15 @@
 import type { CaseStudyPublic } from "~/lib/types";
 import { GridMotif } from "~/components/visuals/GridMotif";
+import { Img } from "~/components/Img";
 
 /** Cover image for a case-study card, with a branded fallback when none is set. */
 export function CaseStudyThumb({ item }: { item: CaseStudyPublic }) {
   if (item.coverImage) {
     return (
-      <img
-        src={item.coverImage.path}
+      <Img
+        media={item.coverImage}
         alt={item.coverImage.alt ?? item.title}
-        width={item.coverImage.width ?? 800}
-        height={item.coverImage.height ?? 450}
-        loading="lazy"
-        decoding="async"
+        sizes="(min-width: 640px) 552px, 100vw"
         className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-[1.02]"
       />
     );

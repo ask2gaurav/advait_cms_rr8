@@ -63,18 +63,70 @@
   }
 }
 
-/* Rich-text output from the CMS (BlockNote → sanitized HTML). */
+/* Rich-text output from the CMS (BlockNote / Lexical → sanitized HTML). */
 .prose-content {
   @apply max-w-none leading-relaxed text-gray-700 dark:text-gray-300;
 }
 .prose-content > * + * {
   @apply mt-4;
 }
+.prose-content h1 {
+  @apply mt-10 text-3xl font-semibold text-gray-900 dark:text-white;
+}
 .prose-content h2 {
   @apply mt-10 text-2xl font-semibold text-gray-900 dark:text-white;
 }
 .prose-content h3 {
   @apply mt-8 text-xl font-semibold text-gray-900 dark:text-white;
+}
+.prose-content h4 {
+  @apply mt-6 text-lg font-semibold text-gray-900 dark:text-white;
+}
+.prose-content hr {
+  @apply my-8 border-gray-200 dark:border-gray-800;
+}
+.prose-content u {
+  @apply underline;
+}
+.prose-content s {
+  @apply line-through;
+}
+.prose-content .text-center {
+  @apply text-center;
+}
+.prose-content .text-right {
+  @apply text-right;
+}
+.prose-content .text-justify {
+  @apply text-justify;
+}
+.prose-content .rt-indent-1 {
+  @apply ml-8;
+}
+.prose-content .rt-indent-2 {
+  @apply ml-16;
+}
+.prose-content .rt-indent-3 {
+  @apply ml-24;
+}
+.prose-content ul ul,
+.prose-content ol ol,
+.prose-content ul ol,
+.prose-content ol ul {
+  @apply mt-1;
+}
+.prose-content ul.checklist {
+  @apply ml-0 list-none;
+}
+.prose-content ul.checklist li {
+  @apply relative pl-6;
+}
+.prose-content ul.checklist li::before {
+  content: "☐";
+  @apply absolute left-0;
+}
+.prose-content ul.checklist li.checked::before {
+  content: "☑";
 }
 .prose-content a {
   @apply font-medium text-brand-600 underline decoration-brand-300 underline-offset-2 hover:text-brand-700 dark:text-brand-400;

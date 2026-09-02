@@ -1,12 +1,14 @@
 import { Form, NavLink, Outlet } from "react-router";
 import type { Route } from "./+types/layout";
 import { requireUser } from "~/lib/auth.server";
+import { getEditorChoice } from "~/lib/settings.server";
 import { cn } from "~/lib/utils";
 import { Button } from "~/components/ui/button";
 
 export async function loader({ request }: Route.LoaderArgs) {
   const user = await requireUser(request);
-  return { user };
+  const editorChoice = await getEditorChoice();
+  return { user, editorChoice };
 }
 
 const NAV = [
@@ -17,6 +19,7 @@ const NAV = [
   { to: "/admin/menus", label: "Menus" },
   { to: "/admin/media", label: "Media" },
   { to: "/admin/users", label: "Users" },
+  { to: "/admin/company-history", label: "Company History" },
   { to: "/admin/settings", label: "Settings" },
 ];
 

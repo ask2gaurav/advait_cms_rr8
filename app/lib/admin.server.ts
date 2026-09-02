@@ -62,6 +62,40 @@ export async function saveOrError(fn: () => Promise<void>) {
   }
 }
 
+/** Parse + validate a JSON-encoded form field (e.g. section / row arrays). */
+export function parseJsonField<T>(
+  form: FormData,
+  name: string,
+  schema: z.ZodType<T>,
+): T {
+  let parsed: unknown;
+  try {
+    parsed = JSON.parse(String(form.get(name) ?? "[]"));
+  } catch {
+    throw new FieldError(name, "Must be valid JSON.");
+  }
+  const result = schema.safeParse(parsed);
+  if (!result.success) {
+    const issue = result.error.issues[0];
+    const path = issue?.path.length ? `${issue.path.join(".")}: ` : "";
+    throw new FieldError(name, `${path}${issue?.message ?? "Invalid data."}`);
+  }
+  return result.data;
+}
+
+/**
+ * Which editor a stored `body` belongs to. Trusts an explicit `bodyFormat`,
+ * else infers from shape (BlockNote = array, Lexical = `{ root }` object).
+ */
+export function inferBodyFormat(
+  body: unknown,
+  stored?: string,
+): "blocknote" | "lexical" {
+  if (stored === "lexical" || stored === "blocknote") return stored;
+  if (body && !Array.isArray(body) && typeof body === "object") return "lexical";
+  return "blocknote";
+}
+
 /** Set publishedAt the first time something is published; keep it thereafter. */
 export function resolvePublishedAt(
   status: string,

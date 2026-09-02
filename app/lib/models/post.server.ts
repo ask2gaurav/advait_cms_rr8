@@ -15,6 +15,7 @@ export interface PostAttrs {
   seoDescription?: string;
   excerpt?: string;
   body: unknown;
+  bodyFormat?: string;
   coverImage?: Types.ObjectId;
   ogImage?: Types.ObjectId;
   tags: string[];
@@ -41,6 +42,11 @@ const postSchema = new Schema<PostAttrs>(
     seoDescription: String,
     excerpt: String,
     body: { type: Schema.Types.Mixed, default: null },
+    bodyFormat: {
+      type: String,
+      enum: ["blocknote", "lexical"],
+      default: "blocknote",
+    },
     coverImage: { type: Schema.Types.ObjectId, ref: "Media" },
     ogImage: { type: Schema.Types.ObjectId, ref: "Media" },
     tags: { type: [String], default: [] },

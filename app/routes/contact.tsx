@@ -73,6 +73,11 @@ export default function Contact({ loaderData }: Route.ComponentProps) {
                   {settings.address}
                 </p>
               )}
+              {settings.clients && (
+                <p className="whitespace-pre-line text-gray-500">
+                  {settings.clients}
+                </p>
+              )}
             </div>
           </div>
 

@@ -28,6 +28,7 @@ export default function BlockNoteEditor({
   return (
     <div className="rounded-md border border-gray-300 dark:border-gray-700">
       <input type="hidden" name={name} value={json} />
+      <input type="hidden" name="bodyFormat" value="blocknote" />
       <BlockNoteView
         editor={editor}
         onChange={() => setJson(JSON.stringify(editor.document))}

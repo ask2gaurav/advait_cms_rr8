@@ -7,12 +7,18 @@ import { CaseStudy } from "~/lib/models/case-study.server";
 import { Menu } from "~/lib/models/menu.server";
 import { Media } from "~/lib/models/media.server";
 import { Setting } from "~/lib/models/setting.server";
+import { CompanyHistory } from "~/lib/models/company-history.server";
+import { readFileSync } from "node:fs";
 import { blocksToHtml } from "~/lib/richtext";
+import { lexicalToHtml } from "~/lib/lexical-html";
 import type {
   CaseStudyPublic,
   CaseStudySectionPublic,
+  CompanyHistoryPublic,
   ContentMeta,
   MediaPublic,
+  OfficeStatus,
+  OfficeType,
   MenuItemPublic,
   MenuPublic,
   PagePublic,
@@ -259,6 +265,54 @@ async function buildMediaMap(ids: Set<string>) {
   return map;
 }
 
+/** `/uploads/...` → derived-variant metadata, from `npm run optimize:media`. */
+const imageManifest: Record<string, { w: number[] }> = (() => {
+  try {
+    return JSON.parse(readFileSync(`${CONTENT_DIR}/image-manifest.json`, "utf8"));
+  } catch {
+    return {};
+  }
+})();
+
+const RICHTEXT_IMG_SIZES = "(min-width: 768px) 720px, 100vw";
+
+/**
+ * Upgrade `<img src="/uploads/…">` in rich-text HTML to a responsive
+ * `<picture>` when `optimize:media` has produced variants for that src.
+ * Runs after sanitize on our own trusted markup.
+ */
+function responsiveBodyImages(html: string): string {
+  return html.replace(/<img\b[^>]*?>/gi, (tag) => {
+    const src = tag.match(/\bsrc="([^"]+)"/i)?.[1];
+    if (!src) return tag;
+    const entry = imageManifest[src];
+    if (!entry || entry.w.length === 0) return tag;
+    const base = src
+      .replace(/\.[^./]+$/, "")
+      .replace(/^\/uploads\//, "/uploads/_derived/");
+    const srcset = (fmt: string) =>
+      entry.w.map((w) => `${base}.${w}.${fmt} ${w}w`).join(", ");
+    const imgWithSizes = /\bsizes=/i.test(tag)
+      ? tag
+      : tag.replace(/\/?>$/, ` sizes="${RICHTEXT_IMG_SIZES}">`);
+    return (
+      `<picture>` +
+      `<source type="image/avif" srcset="${srcset("avif")}" sizes="${RICHTEXT_IMG_SIZES}">` +
+      `<source type="image/webp" srcset="${srcset("webp")}" sizes="${RICHTEXT_IMG_SIZES}">` +
+      `${imgWithSizes}</picture>`
+    );
+  });
+}
+
+/** Render a stored rich-text `body` to sanitized HTML, per its editor format. */
+function bodyToHtml(body: unknown, format?: string): string {
+  const useLexical =
+    format === "lexical" ||
+    (!format && body != null && typeof body === "object" && !Array.isArray(body));
+  const html = sanitize(useLexical ? lexicalToHtml(body) : blocksToHtml(body));
+  return responsiveBodyImages(html);
+}
+
 function wordCount(html: string): number {
   return html.replace(/<[^>]+>/g, " ").trim().split(/\s+/).filter(Boolean).length;
 }
@@ -266,12 +320,13 @@ function wordCount(html: string): number {
 export async function exportContent() {
   await connectDb();
 
-  const [pages, posts, cases, menus, setting] = await Promise.all([
+  const [pages, posts, cases, menus, setting, history] = await Promise.all([
     Page.find({ status: "published" }).sort({ order: 1, title: 1 }).lean(),
     Post.find({ status: "published" }).sort({ publishedAt: -1 }).lean(),
     CaseStudy.find({ status: "published" }).sort({ order: 1, publishedAt: -1 }).lean(),
     Menu.find({ isActive: true }).lean(),
     Setting.findOne({ key: "site" }).lean(),
+    CompanyHistory.findOne({ key: "company-history" }).lean(),
   ]);
 
   // Collect every referenced media id.
@@ -293,10 +348,11 @@ export async function exportContent() {
     add(setting.favicon);
     add(setting.defaultOgImage);
   }
+  (history?.logos ?? []).forEach((l) => add(l.image));
   const media = await buildMediaMap(mediaIds);
 
   const pagesOut: PagePublic[] = pages.map((p) => {
-    const bodyHtml = sanitize(blocksToHtml(p.body));
+    const bodyHtml = bodyToHtml(p.body, p.bodyFormat);
     return {
       title: p.title,
       slug: p.slug,
@@ -314,7 +370,7 @@ export async function exportContent() {
   });
 
   const postsOut: PostPublic[] = posts.map((p) => {
-    const bodyHtml = sanitize(blocksToHtml(p.body));
+    const bodyHtml = bodyToHtml(p.body, p.bodyFormat);
     return {
       title: p.title,
       slug: p.slug,
@@ -336,7 +392,7 @@ export async function exportContent() {
   });
 
   const casesOut: CaseStudyPublic[] = cases.map((c) => {
-    const bodyHtml = sanitize(blocksToHtml(c.body));
+    const bodyHtml = bodyToHtml(c.body, c.bodyFormat);
     return {
       title: c.title,
       slug: c.slug,
@@ -417,7 +473,47 @@ export async function exportContent() {
     contactEmail: setting?.contactEmail,
     contactPhone: setting?.contactPhone,
     address: setting?.address,
+    clients: setting?.clients,
     integrations: (setting?.integrations ?? {}) as SettingsPublic["integrations"],
+  };
+
+  const companyHistoryOut: CompanyHistoryPublic = {
+    introHtml: proseToHtml(history?.intro),
+    addresses: (history?.addresses ?? [])
+      .filter((a) => !a.hidden)
+      .sort(
+        (a, b) =>
+          (a.order ?? 9999) - (b.order ?? 9999) ||
+          (b.fromYear ?? 0) - (a.fromYear ?? 0),
+      )
+      .map((a) => ({
+        label: a.label,
+        lines: a.lines || undefined,
+        city: a.city || undefined,
+        country: a.country || undefined,
+        type: (a.type as OfficeType) ?? "main-office",
+        status: (a.status as OfficeStatus) ?? "open-current",
+        fromYear: a.fromYear,
+        toYear: a.toYear,
+        note: a.note || undefined,
+      })),
+    logos: (history?.logos ?? [])
+      .filter((l) => !l.hidden)
+      .sort(
+        (a, b) =>
+          (a.order ?? 9999) - (b.order ?? 9999) ||
+          (b.fromYear ?? 0) - (a.fromYear ?? 0),
+      )
+      .map((l) => ({
+        image: l.image ? media.get(String(l.image)) : undefined,
+        label: l.label || undefined,
+        fromYear: l.fromYear,
+        toYear: l.toYear,
+        note: l.note || undefined,
+      }))
+      .filter((l) => l.image || l.label),
+    seoTitle: history?.seoTitle,
+    seoDescription: history?.seoDescription,
   };
 
   const meta: ContentMeta = {
@@ -427,6 +523,8 @@ export async function exportContent() {
       posts: postsOut.length,
       caseStudies: casesOut.length,
       menus: menusOut.length,
+      companyAddresses: companyHistoryOut.addresses.length,
+      companyLogos: companyHistoryOut.logos.length,
     },
   };
 
@@ -440,6 +538,7 @@ export async function exportContent() {
     write("case-studies.json", casesOut),
     write("menus.json", menusOut),
     write("settings.json", settingsOut),
+    write("company-history.json", companyHistoryOut),
     write(".meta.json", meta),
   ]);
 

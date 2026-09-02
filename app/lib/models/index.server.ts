@@ -6,3 +6,4 @@ export { CaseStudy } from "./case-study.server";
 export { Menu } from "./menu.server";
 export { Media } from "./media.server";
 export { Setting } from "./setting.server";
+export { CompanyHistory } from "./company-history.server";

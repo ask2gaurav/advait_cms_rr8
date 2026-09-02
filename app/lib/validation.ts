@@ -14,8 +14,14 @@ const seo = {
   seoDescription: z.string().trim().max(400).optional().or(z.literal("")),
 };
 
-/** BlockNote document: an array of blocks. Stored as-is. */
-const richText = z.array(z.any()).default([]);
+/**
+ * Rich-text document, stored as-is. BlockNote serializes to an array of blocks;
+ * Lexical serializes to a `{ root: … }` object — accept either.
+ */
+const richText = z.unknown();
+
+/** Which editor produced `body` (persisted per document). */
+const bodyFormat = z.enum(["blocknote", "lexical"]).optional();
 
 const csv = z
   .string()
@@ -34,6 +40,7 @@ export const pageSchema = z.object({
   template: z.string().trim().min(1).default("default"),
   excerpt: z.string().trim().max(600).optional().or(z.literal("")),
   body: richText,
+  bodyFormat,
   ...seo,
   ogImage: z.string().trim().optional().or(z.literal("")),
 });
@@ -44,6 +51,7 @@ export const postSchema = z.object({
   status,
   excerpt: z.string().trim().max(600).optional().or(z.literal("")),
   body: richText,
+  bodyFormat,
   coverImage: z.string().trim().optional().or(z.literal("")),
   ogImage: z.string().trim().optional().or(z.literal("")),
   tags: csv,
@@ -59,6 +67,7 @@ export const caseStudySchema = z.object({
   status,
   excerpt: z.string().trim().max(600).optional().or(z.literal("")),
   body: richText,
+  bodyFormat,
   coverImage: z.string().trim().optional().or(z.literal("")),
   ogImage: z.string().trim().optional().or(z.literal("")),
   gallery: z
@@ -240,6 +249,54 @@ export const caseStudySectionSchema = z.discriminatedUnion("type", [
 
 export const caseStudySectionsSchema = z.array(caseStudySectionSchema).default([]);
 
+/* ---------------------------------------------------------------------------
+ * Company history: intro + arrays of past office addresses and logos.
+ * Authored as JSON in the admin (like Menu items / case-study sections).
+ * ------------------------------------------------------------------------- */
+
+const year = z.coerce.number().int().min(1900).max(2100).optional();
+
+export const companyHistorySchema = z.object({
+  intro: z.string().trim().max(2000).optional().or(z.literal("")),
+  ...seo,
+});
+
+export const companyAddressesSchema = z
+  .array(
+    z.object({
+      label: z.string().trim().min(1, "Address label is required"),
+      lines: z.string().trim().optional().or(z.literal("")),
+      city: z.string().trim().optional().or(z.literal("")),
+      country: z.string().trim().optional().or(z.literal("")),
+      type: z.enum(["main-office", "branch", "registered-office"]),
+      status: z.enum([
+        "open-current",
+        "temporarily-closed",
+        "permanently-closed",
+      ]),
+      fromYear: year,
+      toYear: year,
+      note: z.string().trim().optional().or(z.literal("")),
+      order: z.coerce.number().int().optional(),
+      hidden: z.coerce.boolean().optional(),
+    }),
+  )
+  .default([]);
+
+export const companyLogosSchema = z
+  .array(
+    z.object({
+      image: z.string().trim().optional().or(z.literal("")),
+      label: z.string().trim().optional().or(z.literal("")),
+      fromYear: year,
+      toYear: year,
+      note: z.string().trim().optional().or(z.literal("")),
+      order: z.coerce.number().int().optional(),
+      hidden: z.coerce.boolean().optional(),
+    }),
+  )
+  .default([]);
+
 export const userSchema = z.object({
   email: z.string().trim().toLowerCase().email(),
   name: z.string().trim().min(1),
@@ -257,6 +314,8 @@ export const settingsSchema = z.object({
   contactEmail: z.string().trim().email().optional().or(z.literal("")),
   contactPhone: z.string().trim().optional().or(z.literal("")),
   address: z.string().trim().optional().or(z.literal("")),
+  clients: z.string().trim().optional().or(z.literal("")),
+  editor: z.enum(["blocknote", "lexical"]).default("blocknote"),
   twitter: z.string().trim().optional().or(z.literal("")),
   linkedin: z.string().trim().optional().or(z.literal("")),
   github: z.string().trim().optional().or(z.literal("")),

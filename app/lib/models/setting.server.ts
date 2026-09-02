@@ -20,6 +20,8 @@ export interface SettingAttrs {
   contactEmail?: string;
   contactPhone?: string;
   address?: string;
+  clients?: string;
+  editor?: string;
   integrations?: Record<string, unknown>;
   extras?: Record<string, unknown>;
   createdAt: Date;
@@ -41,6 +43,8 @@ const settingSchema = new Schema<SettingAttrs>(
     contactEmail: String,
     contactPhone: String,
     address: String,
+    clients: String,
+    editor: { type: String, enum: ["blocknote", "lexical"], default: "blocknote" },
     integrations: { type: Schema.Types.Mixed, default: {} },
     extras: { type: Schema.Types.Mixed, default: {} },
   },

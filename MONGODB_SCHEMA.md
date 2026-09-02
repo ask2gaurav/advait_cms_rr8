@@ -29,7 +29,9 @@ Site-wide configuration. Usually only one document (or keyed by `key`).
   };
   contactEmail?: string;
   contactPhone?: string;
-  address?: string;
+  address?: string;               // postal address (footer + contact page)
+  clients?: string;               // regions / clients line, shown below address
+  editor?: "blocknote" | "lexical";  // default rich-text editor for new content
   // free-form extras
   extras?: Record<string, unknown>;
 }
@@ -102,7 +104,8 @@ Flexible pages (Home, About, Approach, Contact, or any custom page).
   ogImage?: ObjectId;             // → Media
   // Content
   excerpt?: string;
-  body: unknown;                  // BlockNote / Tiptap JSON
+  body: unknown;                  // BlockNote (array) or Lexical ({root}) JSON
+  bodyFormat?: "blocknote" | "lexical";  // which editor authored `body`
   // Optional structured sections (for page builders later)
   sections?: Array<{
     type: string;
@@ -128,7 +131,8 @@ Flexible pages (Home, About, Approach, Contact, or any custom page).
   seoDescription?: string;
   // Content
   excerpt?: string;
-  body: unknown;                  // BlockNote / Tiptap JSON
+  body: unknown;                  // BlockNote (array) or Lexical ({root}) JSON
+  bodyFormat?: "blocknote" | "lexical";  // which editor authored `body`
   coverImage?: ObjectId;          // → Media
   // Taxonomy
   tags: string[];
@@ -156,7 +160,8 @@ Flexible pages (Home, About, Approach, Contact, or any custom page).
   // Content
   heroEyebrow?: string;           // small label above the hero title ("Case Study — X")
   excerpt?: string;
-  body: unknown;                  // BlockNote / Tiptap JSON
+  body: unknown;                  // BlockNote (array) or Lexical ({root}) JSON
+  bodyFormat?: "blocknote" | "lexical";  // which editor authored `body`
   coverImage?: ObjectId;          // → Media
   gallery?: ObjectId[];           // → Media[]
   // Project details

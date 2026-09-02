@@ -51,6 +51,7 @@ export const siteContent = {
     { label: "Case Studies", href: "/works" },
     { label: "About", href: "/about" },
     { label: "Insights", href: "/blog" },
+    { label: "Our History", href: "/history" },
     { label: "Contact", href: "/contact" },
   ] as { label: string; href: string }[],
 

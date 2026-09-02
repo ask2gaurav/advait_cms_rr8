@@ -223,6 +223,7 @@ export interface SettingsPublic {
   contactEmail?: string;
   contactPhone?: string;
   address?: string;
+  clients?: string;
   /** Optional third-party integration config (Giscus, Cal.com, contact form). */
   integrations?: {
     giscus?: Record<string, string>;
@@ -235,4 +236,40 @@ export interface SettingsPublic {
 export interface ContentMeta {
   exportedAt: string;
   counts: Record<string, number>;
+}
+
+/* --------------------------------------------------------------- company history */
+
+export type OfficeType = "main-office" | "branch" | "registered-office";
+export type OfficeStatus =
+  | "open-current"
+  | "temporarily-closed"
+  | "permanently-closed";
+
+export interface CompanyAddressPublic {
+  label: string;
+  lines?: string;
+  city?: string;
+  country?: string;
+  type: OfficeType;
+  status: OfficeStatus;
+  fromYear?: number;
+  toYear?: number;
+  note?: string;
+}
+
+export interface CompanyLogoPublic {
+  image?: MediaPublic;
+  label?: string;
+  fromYear?: number;
+  toYear?: number;
+  note?: string;
+}
+
+export interface CompanyHistoryPublic {
+  introHtml?: string;
+  addresses: CompanyAddressPublic[];
+  logos: CompanyLogoPublic[];
+  seoTitle?: string;
+  seoDescription?: string;
 }

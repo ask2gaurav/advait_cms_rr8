@@ -1,6 +1,7 @@
 import type { CaseStudyReadout, MediaPublic } from "~/lib/types";
 import { Container } from "~/components/site";
 import { GridMotif } from "~/components/visuals/GridMotif";
+import { Img } from "~/components/Img";
 
 /**
  * Dark long-form case-study hero: eyebrow, headline, lede and a row of stat
@@ -51,13 +52,11 @@ export function CaseStudyHero({
 
       {cover && (
         <Container className="relative pb-16 sm:pb-20">
-          <img
-            src={cover.path}
+          <Img
+            media={cover}
             alt={cover.alt ?? title}
-            width={cover.width ?? 1200}
-            height={cover.height ?? 675}
-            loading="lazy"
-            decoding="async"
+            priority
+            sizes="(min-width: 1280px) 1104px, 100vw"
             className="w-full rounded-xl border border-white/10 object-cover"
           />
         </Container>

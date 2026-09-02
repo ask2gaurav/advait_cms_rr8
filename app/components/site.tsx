@@ -9,6 +9,7 @@ import { ThemeToggle } from "~/components/theme-toggle";
 import { MobileNav, type NavItem } from "~/components/MobileNav";
 import { GridMotif } from "~/components/visuals/GridMotif";
 import { BrandLockup, BrandLockupStacked } from "~/components/brand-lockup";
+import { Img } from "~/components/Img";
 
 export function Container({
   children,
@@ -49,7 +50,7 @@ function Logo({
 }) {
   // A CMS-uploaded logo wins; otherwise use the built-in inline lockup so the
   // wordmark renders in Inter and "Solutions" follows the dark theme.
-  const custom = settings.logo?.path;
+  const custom = settings.logo;
   return (
     <Link
       to="/"
@@ -57,11 +58,11 @@ function Logo({
       aria-label={settings.siteName}
     >
       {custom ? (
-        <img
-          src={custom}
+        <Img
+          media={custom}
           alt={settings.siteName}
-          width={settings.logo?.width ?? 160}
-          height={settings.logo?.height ?? 32}
+          priority
+          sizes="160px"
           className="h-8 w-auto"
         />
       ) : variant === "stacked" ? (
@@ -170,10 +171,13 @@ export function SiteFooter({
   settings: SettingsPublic;
   menu?: MenuPublic;
 }) {
-  const links =
+  const baseLinks =
     menu && menu.items.length > 0
       ? menu.items.map((i) => ({ label: i.label, href: i.url }))
       : siteContent.footerNav;
+  const links = baseLinks.some((l) => l.href === "/history")
+    ? baseLinks
+    : [...baseLinks, { label: "Our History", href: "/history" }];
   const social = Object.entries(settings.social ?? {}).filter(([, v]) => v);
   const description =
     settings.defaultSeoDescription || siteContent.brand.description;
@@ -227,6 +231,9 @@ export function SiteFooter({
             {settings.contactPhone && <li>{settings.contactPhone}</li>}
             {settings.address && (
               <li className="whitespace-pre-line">{settings.address}</li>
+            )}
+            {settings.clients && (
+              <li className="whitespace-pre-line">{settings.clients}</li>
             )}
             {social.map(([k, v]) => (
               <li key={k}>

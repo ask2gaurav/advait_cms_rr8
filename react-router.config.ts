@@ -41,6 +41,7 @@ export default {
       "/contact",
       "/works",
       "/blog",
+      "/history",
       "/offline",
       "/sitemap.xml",
       "/robots.txt",

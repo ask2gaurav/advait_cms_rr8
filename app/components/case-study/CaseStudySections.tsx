@@ -5,6 +5,7 @@ import { Prose } from "~/components/site";
 import { Badge } from "~/components/ui/Badge";
 import { cn } from "~/lib/utils";
 import { BeforeAfterDiagram } from "~/components/case-study/BeforeAfterDiagram";
+import { Img } from "~/components/Img";
 
 /* ------------------------------------------------------------------ helpers */
 
@@ -25,7 +26,7 @@ function SectionShell({
 }) {
   const onDark = bg === "ink";
   return (
-    <Section bg={bg}>
+    <Section bg={bg} spacing="compact-case-study">
       <Container>
         {(kicker || title) && (
           <div className="max-w-2xl">
@@ -137,13 +138,9 @@ function JourneySection({ data }: { data: Data<"journey"> }) {
       )}
       {data.diagram && (
         <figure className="mt-10">
-          <img
-            src={data.diagram.path}
-            alt={data.diagram.alt ?? ""}
-            width={data.diagram.width ?? 1200}
-            height={data.diagram.height ?? 675}
-            loading="lazy"
-            decoding="async"
+          <Img
+            media={data.diagram}
+            sizes="(min-width: 768px) 720px, 100vw"
             className="w-full rounded-xl border border-gray-200 dark:border-gray-800"
           />
         </figure>
@@ -195,13 +192,10 @@ function EvolutionShot({
   if (media) {
     return (
       <figure>
-        <img
-          src={media.path}
+        <Img
+          media={media}
           alt={media.alt ?? label}
-          width={media.width ?? 800}
-          height={media.height ?? 600}
-          loading="lazy"
-          decoding="async"
+          sizes="(min-width: 640px) 45vw, 100vw"
           className="w-full rounded-lg border border-gray-200 object-cover dark:border-gray-800"
         />
         <figcaption className="mt-2 text-xs font-semibold uppercase tracking-widest text-gray-500">
@@ -242,13 +236,9 @@ function EvolutionSection({ data }: { data: Data<"evolution"> }) {
           {showcase.map((item, i) => (
             <div key={i}>
               {item.image && (
-                <img
-                  src={item.image.path}
-                  alt={item.image.alt ?? ""}
-                  width={item.image.width ?? 800}
-                  height={item.image.height ?? 600}
-                  loading="lazy"
-                  decoding="async"
+                <Img
+                  media={item.image}
+                  sizes="(min-width: 640px) 45vw, 100vw"
                   className="mb-3 w-full rounded-lg border border-gray-200 object-cover dark:border-gray-800"
                 />
               )}

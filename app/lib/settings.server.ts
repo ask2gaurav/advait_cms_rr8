@@ -11,9 +11,18 @@ export interface SettingsValues {
   contactEmail?: string;
   contactPhone?: string;
   address?: string;
+  clients?: string;
+  editor?: "blocknote" | "lexical";
   twitter?: string;
   linkedin?: string;
   github?: string;
+}
+
+/** The admin's chosen default rich-text editor for new documents. */
+export async function getEditorChoice(): Promise<"blocknote" | "lexical"> {
+  await connectDb();
+  const d = await Setting.findOne({ key: "site" }).select("editor").lean();
+  return d?.editor === "lexical" ? "lexical" : "blocknote";
 }
 
 export async function getSettingsValues(): Promise<SettingsValues> {
@@ -29,6 +38,8 @@ export async function getSettingsValues(): Promise<SettingsValues> {
     contactEmail: d?.contactEmail,
     contactPhone: d?.contactPhone,
     address: d?.address,
+    clients: d?.clients,
+    editor: d?.editor === "lexical" ? "lexical" : "blocknote",
     twitter: social.twitter,
     linkedin: social.linkedin,
     github: social.github,
@@ -50,6 +61,8 @@ export async function saveSettings(form: FormData) {
       contactEmail: input.contactEmail || undefined,
       contactPhone: input.contactPhone || undefined,
       address: input.address || undefined,
+      clients: input.clients || undefined,
+      editor: input.editor,
       social: {
         twitter: input.twitter || undefined,
         linkedin: input.linkedin || undefined,
