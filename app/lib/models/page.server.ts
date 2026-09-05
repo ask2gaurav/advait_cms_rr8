@@ -15,6 +15,7 @@ export interface PageAttrs {
   seoTitle?: string;
   seoDescription?: string;
   ogImage?: Types.ObjectId;
+  coverImage?: Types.ObjectId;
   excerpt?: string;
   body: unknown;
   bodyFormat?: string;
@@ -39,6 +40,7 @@ const pageSchema = new Schema<PageAttrs>(
     seoTitle: String,
     seoDescription: String,
     ogImage: { type: Schema.Types.ObjectId, ref: "Media" },
+    coverImage: { type: Schema.Types.ObjectId, ref: "Media" },
     excerpt: String,
     body: { type: Schema.Types.Mixed, default: null },
     bodyFormat: {

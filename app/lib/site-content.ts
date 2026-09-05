@@ -190,8 +190,10 @@ export const siteContent = {
       cmsSection: "page-services",
       hero: {
         eyebrow: "Services",
-        title: "AI-accelerated engineering, delivered end to end",
-        lead: "Senior software development and production AI, from one accountable team.",
+        title: "Services Built for the AI Era",
+        lead: "20+ years of senior software delivery, now accelerated with AI coding agents and production-grade RAG & multi-agent systems — same accountability, faster outcomes.",
+        primaryCta: { label: "Discuss Your Project", href: "/contact" } as CtaDef,
+        secondaryCta: { label: "View Pricing Models", href: "#pricing-models" } as CtaDef,
       },
       blocks: [
         {
@@ -201,7 +203,7 @@ export const siteContent = {
         },
         {
           icon: "brain",
-          title: "Production RAG & Multi-Agent Systems",
+          title: "Production RAG, Multi-Agent & Knowledge Systems",
           body: "Retrieval-augmented generation with guardrails, intent classification, tool calling (SQL/API), multi-agent orchestration, audit logging and human-in-the-loop gates — designed to survive real users and real data.",
         },
         {
@@ -211,10 +213,168 @@ export const siteContent = {
         },
         {
           icon: "lifebuoy",
-          title: "Ongoing Management, Optimization & Support",
-          body: "Post-launch monitoring, performance and cost optimization, iterative feature work and dependable support arrangements.",
+          title: "Ongoing Management, Optimization & AI Monitoring",
+          body: "Post-launch monitoring, performance and cost optimization, AI usage/quality monitoring, iterative feature work and dependable support arrangements.",
         },
       ] as { icon: IconName; title: string; body: string }[],
+
+      pricingPhilosophy: {
+        eyebrow: "Pricing Philosophy",
+        title: "Why pricing is changing in the age of AI coding agents",
+        body: [
+          "AI coding agents and modern LLMs have genuinely changed how fast well-scoped software gets built. When a large share of the implementation work is AI-accelerated, pricing that's purely \"hours × rate\" no longer reflects the value being delivered — to either side.",
+          "That doesn't mean less oversight. Senior architecture decisions, security review, test strategy, code review and client communication remain fully human-led. AI accelerates the work; it does not replace accountability. Our pricing models below are built around that split — you pay for outcomes and judgment, not just hours typed.",
+        ],
+      },
+
+      oldModel: {
+        icon: "clock" as IconName,
+        title: "Traditional / Old Model — Pure Time & Materials",
+        summary: "Pre-AI hourly billing, still common for classic PHP/MySQL/React work.",
+        points: [
+          "Pure Time & Materials — hourly rates × estimated hours",
+          "Cost based mainly on raw human effort",
+          "Client bears most of the estimation risk",
+          "Slower delivery, higher cost for the same scope",
+          "Typical for classic projects built without AI coding agents",
+        ],
+      } as {
+        icon: IconName;
+        title: string;
+        summary: string;
+        points: string[];
+      },
+
+      newModels: [
+        {
+          icon: "zap",
+          title: "AI-Accelerated Fixed Price",
+          summary:
+            "Scope is defined, we apply AI velocity, then quote a fixed price with contingency.",
+          points: [
+            "Typically 40–70% fewer billable hours for the same scope",
+            "Client knows the total cost upfront",
+            "We keep the efficiency gain while still delivering faster",
+          ],
+        },
+        {
+          icon: "trendingUp",
+          title: "Value-Based / Outcome-Based Pricing",
+          summary: "Price tied to the business result, not the hours behind it.",
+          points: [
+            "Tied to time saved, revenue impact, cost reduction or risk reduced",
+            "Often 10–25% of first-year client value, or a share of measurable savings",
+            "Best when the business outcome is clearly measurable upfront",
+          ],
+        },
+        {
+          icon: "layers",
+          title: "Hybrid Model",
+          badge: "Recommended",
+          summary: "Fixed price for the core build, with transparent, shared upside.",
+          points: [
+            "Fixed price or capped T&M for the core delivery",
+            "Transparent tracking of AI-assisted vs. human-review hours",
+            "Optional shared-savings clause on top",
+          ],
+        },
+        {
+          icon: "package",
+          title: "Productized Packages + Monthly Retainer",
+          summary: "A defined package plus ongoing management and optimization.",
+          points: [
+            "Clear packages — e.g. AI-Ready Website + RAG Chat, Custom Knowledge Agent, IoT + AI Dashboard",
+            "One-time setup fee",
+            "Monthly management, optimization & AI-monitoring fee",
+          ],
+        },
+      ] as {
+        icon: IconName;
+        title: string;
+        badge?: string;
+        summary: string;
+        points: string[];
+      }[],
+
+      comparisonRows: [
+        {
+          label: "What you pay for",
+          old: "Hours worked, regardless of AI leverage",
+          new: "Scope delivered, or the value/outcome it creates",
+        },
+        {
+          label: "Who carries estimation risk",
+          old: "Mostly the client — overruns bill through",
+          new: "Shared, or carried by us within a fixed/capped price",
+        },
+        {
+          label: "Speed of delivery",
+          old: "Bound by human typing & review speed",
+          new: "AI-accelerated build, human-gated review",
+        },
+        {
+          label: "Predictability of cost",
+          old: "Low — final cost known only at the end",
+          new: "High — fixed, capped, or tied to agreed value",
+        },
+        {
+          label: "Typical best fit",
+          old: "Highly uncertain, constantly shifting scope",
+          new: "Defined scope, or a measurable business outcome",
+        },
+      ] as { label: string; old: string; new: string }[],
+
+      pricingRanges: [
+        {
+          title: "Small AI-accelerated website or internal tool",
+          range: "$4,000 – $12,000",
+          note: "Starting from — typical range, final quote after discovery",
+        },
+        {
+          title: "Mid-size custom platform or RAG system",
+          range: "$15,000 – $50,000",
+          note: "Starting from — typical range, final quote after discovery",
+        },
+        {
+          title: "Larger multi-agent or IoT + AI solution",
+          range: "$50,000 – $150,000+",
+          note: "Starting from — typical range, final quote after discovery",
+        },
+        {
+          title: "Monthly retainer for ongoing work",
+          range: "$1,500 – $8,000 / mo",
+          note: "Scoped to support level — management, optimization & AI monitoring",
+        },
+      ] as { title: string; range: string; note: string }[],
+
+      process: [
+        {
+          title: "Discovery",
+          body: "We learn your goals, constraints and existing systems.",
+        },
+        {
+          title: "Proposal",
+          body: "A scoped proposal with the pricing model that fits best.",
+        },
+        {
+          title: "Build",
+          body: "AI-accelerated delivery with senior human review gates.",
+        },
+        {
+          title: "Delivery & knowledge transfer",
+          body: "Clean handoff, documentation, and your team briefed.",
+        },
+        {
+          title: "Optional ongoing support",
+          body: "Monitoring, optimization and a dependable retainer.",
+        },
+      ] as { title: string; body: string }[],
+
+      finalCta: {
+        title: "Let's scope your project the right way",
+        body: "For clients across the US, Canada, UK, Europe and the Middle East — book a discovery call and we'll recommend the pricing model that fits your project best.",
+        cta: { label: "Book a Discovery Call", href: "/contact" } as CtaDef,
+      },
     },
 
     products: {

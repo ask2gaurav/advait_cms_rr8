@@ -50,6 +50,7 @@ export function PageForm({
       <Field label="Body" error={fe.body}>
         <RichTextEditor name="body" format={format} initialContent={values.body} />
       </Field>
+      <MediaField name="coverImage" label="Cover image" defaultValue={values.coverImage} />
       <fieldset className="space-y-4 rounded-md border border-gray-200 p-4 dark:border-gray-800">
         <legend className="px-1 text-sm font-medium">SEO</legend>
         <TextField name="seoTitle" label="Meta title" defaultValue={values.seoTitle} />

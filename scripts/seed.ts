@@ -36,14 +36,21 @@ function altFromName(name: string): string {
  * map from original file name (e.g. `app_lock.png`) to the Media `_id`.
  */
 async function seedMedia(): Promise<Map<string, mongoose.Types.ObjectId>> {
-  const srcRoots = ["input_media", "input_case_studies"];
+  const srcRoots = ["input_media", "input_pages"];
   const destDir = join("public", "uploads", "seed");
   await mkdir(destDir, { recursive: true });
 
-  // Recursively collect files.
+  // Recursively collect files. Tolerant of a root that doesn't exist (e.g. an
+  // input folder that was renamed) so seeding never hard-crashes on it.
   const files: string[] = [];
   async function walk(dir: string) {
-    for (const entry of await readdir(dir, { withFileTypes: true })) {
+    let entries;
+    try {
+      entries = await readdir(dir, { withFileTypes: true });
+    } catch {
+      return;
+    }
+    for (const entry of entries) {
       const full = join(dir, entry.name);
       if (entry.isDirectory()) await walk(full);
       else files.push(full);
@@ -139,7 +146,7 @@ async function main() {
     const _id = media.get(name);
     if (!_id)
       throw new Error(
-        `seed: expected media file "${name}" in input_media/ or input_case_studies/`,
+        `seed: expected media file "${name}" in input_media/ or input_pages/`,
       );
     return _id;
   };
@@ -224,9 +231,21 @@ async function main() {
   // Published Page stubs so nav links resolve and admins can edit SEO / intro.
   // Structured content in app/lib/site-content.ts carries the visual design;
   // the CMS body is an optional add-on.
-  const pageStubs: { title: string; slug: string; template: string; seo: string }[] = [
+  const pageStubs: {
+    title: string;
+    slug: string;
+    template: string;
+    seo: string;
+    coverImage?: mongoose.Types.ObjectId;
+  }[] = [
     { title: "Home", slug: "home", template: "home", seo: siteContent.home.hero.subhead },
-    { title: "Services", slug: "services", template: "default", seo: siteContent.pages.services.hero.lead },
+    {
+      title: "Services",
+      slug: "services",
+      template: "default",
+      seo: siteContent.pages.services.hero.lead,
+      coverImage: mediaId("cover_image_services.png"),
+    },
     { title: "AI Products", slug: "products", template: "default", seo: siteContent.pages.products.hero.lead },
     { title: "About", slug: "about", template: "about", seo: siteContent.pages.about.hero.lead },
     { title: "Approach", slug: "approach", template: "default", seo: siteContent.pages.approach.hero.lead },
@@ -243,12 +262,20 @@ async function main() {
           status: "published",
           seoDescription: p.seo,
           body: [],
+          coverImage: p.coverImage,
           publishedAt: new Date(),
         },
       },
       { upsert: true, returnDocument: "after" },
     );
     console.log(`✓ page ready: ${page.title} (/${page.slug})`);
+
+    // `SEED_RELINK_MEDIA=1 npm run seed` also refreshes a page stub's seed-managed
+    // cover image on an existing record (the $setOnInsert above only applies on
+    // first insert).
+    if (p.coverImage && process.env.SEED_RELINK_MEDIA === "1") {
+      await Page.updateOne({ slug: p.slug }, { $set: { coverImage: p.coverImage } });
+    }
   }
 
   // Sample structured case study (insert-if-missing; never overwrites edits,

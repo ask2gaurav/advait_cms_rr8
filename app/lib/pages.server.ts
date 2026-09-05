@@ -13,6 +13,7 @@ export interface PageValues {
   body?: unknown;
   bodyFormat?: "blocknote" | "lexical";
   ogImage?: string;
+  coverImage?: string;
   seoTitle?: string;
   seoDescription?: string;
 }
@@ -43,6 +44,7 @@ export async function getPageValues(id: string): Promise<PageValues | null> {
     body: d.body ?? null,
     bodyFormat: inferBodyFormat(d.body, d.bodyFormat),
     ogImage: d.ogImage ? String(d.ogImage) : "",
+    coverImage: d.coverImage ? String(d.coverImage) : "",
     seoTitle: d.seoTitle,
     seoDescription: d.seoDescription,
   };
@@ -59,6 +61,7 @@ export async function savePage(form: FormData, id?: string) {
     slug,
     bodyFormat: input.bodyFormat || "blocknote",
     ogImage: input.ogImage || undefined,
+    coverImage: input.coverImage || undefined,
     seoTitle: input.seoTitle || undefined,
     seoDescription: input.seoDescription || undefined,
     publishedAt: resolvePublishedAt(input.status, doc.publishedAt),

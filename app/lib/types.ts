@@ -36,6 +36,7 @@ export interface PagePublic extends SeoFields {
   excerpt?: string;
   body: RichTextJSON;
   bodyHtml: string;
+  coverImage?: MediaPublic;
   order?: number;
   publishedAt?: string;
   updatedAt: string;

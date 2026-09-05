@@ -43,6 +43,7 @@ export const pageSchema = z.object({
   bodyFormat,
   ...seo,
   ogImage: z.string().trim().optional().or(z.literal("")),
+  coverImage: z.string().trim().optional().or(z.literal("")),
 });
 
 export const postSchema = z.object({

@@ -332,7 +332,10 @@ export async function exportContent() {
   // Collect every referenced media id.
   const mediaIds = new Set<string>();
   const add = (v: unknown) => v && mediaIds.add(String(v));
-  pages.forEach((p) => add(p.ogImage));
+  pages.forEach((p) => {
+    add(p.ogImage);
+    add(p.coverImage);
+  });
   posts.forEach((p) => {
     add(p.coverImage);
     add(p.ogImage);
@@ -360,6 +363,7 @@ export async function exportContent() {
       excerpt: p.excerpt,
       body: p.body ?? [],
       bodyHtml,
+      coverImage: p.coverImage ? media.get(String(p.coverImage)) : undefined,
       order: p.order,
       seoTitle: p.seoTitle,
       seoDescription: p.seoDescription,
