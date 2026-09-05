@@ -6,8 +6,8 @@
 | **Session ID** | `9bcfd16f-6c07-403e-b11a-9daf0c076acc` |
 | **Working Dir** | `d:\projects\advait\cmsrr7` |
 | **Started** | 9/2/2026, 12:37:46 PM |
-| **Last Updated** | 9/5/2026, 3:05:32 PM |
-| **Messages** | 984 |
+| **Last Updated** | 9/5/2026, 3:05:58 PM |
+| **Messages** | 989 |
 
 ---
 
@@ -17500,6 +17500,142 @@ app/lib/export.server.ts:100:  for (const raw of sections as RawSection[]) {
 app/lib/export.server.ts:344:    collectSectionMediaIds(c.sections, add);
 app/lib/export.server.ts:418:      sections: buildCaseStudySections(c.sections, media),
 app/lib/validation.ts:254: * Authored as JSON in the admin (like Menu items / case-study sections).
+```
+
+</details>
+
+
+---
+
+## Assistant <sup>9/5/2026, 3:05:56 PM</sup>
+
+
+---
+
+## Assistant <sup>9/5/2026, 3:05:57 PM</sup>
+
+<details>
+<summary>Tool: <code>Read</code></summary>
+
+```json
+{
+  "file_path": "d:\\projects\\advait\\cmsrr7\\app\\components\\FeatureBlocks.tsx"
+}
+```
+
+</details>
+
+
+---
+
+## User <sup>9/5/2026, 3:05:57 PM</sup>
+
+<details>
+<summary>Tool Result</summary>
+
+```
+1	import { Icon, type IconName } from "~/components/Icon";
+2	
+3	export interface FeatureBlock {
+4	  icon: IconName;
+5	  title: string;
+6	  body: string;
+7	}
+8	
+9	/** Vertical list of icon + heading + paragraph blocks (Services / Products). */
+10	export function FeatureBlocks({
+11	  blocks,
+12	  columns = 2,
+13	}: {
+14	  blocks: readonly FeatureBlock[];
+15	  columns?: 1 | 2 | 3;
+16	}) {
+17	  return (
+18	    <div
+19	      className={
+20	        columns === 1
+21	          ? "grid gap-8"
+22	          : columns === 3
+23	            ? "grid gap-8 sm:grid-cols-2 lg:grid-cols-3"
+24	            : "grid gap-8 sm:grid-cols-2"
+25	      }
+26	    >
+27	      {blocks.map((b) => (
+28	        <article key={b.title} className="flex gap-4">
+29	          <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-lg bg-brand-50 text-brand-600 dark:bg-brand-500/10 dark:text-brand-400">
+30	            <Icon name={b.icon} />
+31	          </span>
+32	          <div>
+33	            <h3 className
+...(truncated)
+```
+
+</details>
+
+
+---
+
+## Assistant <sup>9/5/2026, 3:05:57 PM</sup>
+
+<details>
+<summary>Tool: <code>Bash</code></summary>
+
+```json
+{
+  "command": "ls app/components/home/ app/components/ 2>/dev/null; echo \"---icons---\"; grep -n \"IconName\\s*=\" -A 40 app/components/Icon.tsx | head -50"
+}
+```
+
+</details>
+
+
+---
+
+## User <sup>9/5/2026, 3:05:58 PM</sup>
+
+<details>
+<summary>Tool Result</summary>
+
+```
+app/components/:
+CaseStudyThumb.tsx
+ClientOnly.tsx
+FeatureBlocks.tsx
+Giscus.tsx
+Icon.tsx
+Img.tsx
+MobileNav.tsx
+TemplatePage.tsx
+brand-lockup.tsx
+case-study
+home
+layout
+site.tsx
+theme-toggle.tsx
+ui
+visuals
+
+app/components/home/:
+AiCapabilities.tsx
+FeaturedWork.tsx
+FinalCta.tsx
+Hero.tsx
+ServicesSnapshot.tsx
+TrustBar.tsx
+WhyAdvait.tsx
+---icons---
+44:export type IconName = keyof typeof ICONS;
+45-
+46-export function Icon({
+47-  name,
+48-  className,
+49-}: {
+50-  name: IconName;
+51-  className?: string;
+52-}) {
+53-  const Cmp = ICONS[name] ?? Sparkles;
+54-  return <Cmp className={cn("h-5 w-5", className)} aria-hidden />;
+55-}
 ```
 
 </details>
